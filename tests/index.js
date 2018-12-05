@@ -87,7 +87,16 @@ describe('DigitalLink', () => {
     });
 
     it('should throw for missing domain or identifier', () => {
+      const construct = () => {
+        new DigitalLink({
+          keyQualifiers: {
+            [DATA.batchQualifier.key]: DATA.batchQualifier.value,
+            [DATA.serialQualifier.key]: DATA.serialQualifier.value,
+          },
+        });
+      };
 
+      expect(construct).to.throw();
     });
 
     it('should produce the correct full string', () => {
