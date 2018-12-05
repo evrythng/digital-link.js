@@ -1,0 +1,18 @@
+{
+  "name": "evrythng-gs1-dl-sdk",
+  "version": "1.0.0",
+  "description": "An SDK for the GS1 Digital Link data format.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha tests/index.js"
+  },
+  "author": "EVRYTHNG",
+  "license": "",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "apg-lib": "^3.2.0"
+  }
+}
