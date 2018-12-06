@@ -85,6 +85,40 @@ describe('DigitalLink', () => {
       expect(createUsingChain).to.not.throw();
     });
 
+    it('should build from string - domain + identifier', () => {
+      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+
+      expect(dl.getDomain()).to.equal(DATA.domain);
+      expect(dl.getIdentifier()).to.deep.equal({ 
+        [DATA.identifier.key]: DATA.identifier.value,
+      });
+    });
+
+    it('should build from string - domain + identifier + 1 key qualifier', () => {
+      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643');
+
+      expect(dl.getDomain()).to.equal(DATA.domain);
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getKeyQualifier('10')).to.equal('38737643');
+    });
+
+    it('should build from string - domain + identifier + 1 key qualifier + 1 attribute', () => {
+      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643?15=230911');
+
+      expect(dl.getDomain()).to.equal(DATA.domain);
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getKeyQualifier('10')).to.equal('38737643');
+      expect(dl.getAttribute('15')).to.equal('230911');
+    });
+
+    it('should produce the same regardless of construction method', () => {
+      const url = createUsingSetters().toString();
+      expect(url).to.equal(createUsingObject().toString());
+      expect(url).to.equal(createUsingString().toString());
+    });
+  });
+
+  describe('Invalid Construction', () => {
     it('should throw for a missing protocol', () => {
       expect(() => new DigitalLink('badurl')).to.throw();
     });
@@ -105,31 +139,6 @@ describe('DigitalLink', () => {
     it('should throw for missing identifier (string)', () => {
       expect(() => new DigitalLink(DATA.domain)).to.throw();
     });
-
-    it('should generate the correct full string', () => {
-      expect(createUsingSetters().toString()).to.equal(DATA.result);
-    });
-
-    it('should build from string - domain + identifier', () => {
-      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913');
-
-      expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
-    });
-
-    it('should build from string - domain + identifier + 1 key qualifier', () => {
-      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643');
-
-      expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
-      expect(dl.getKeyQualifier('10')).to.equal('38737643');
-    });
-
-    it('should produce the same regardless of construction method', () => {
-      const url = createUsingSetters().toString();
-      expect(url).to.equal(createUsingObject().toString());
-      expect(url).to.equal(createUsingString().toString());
-    });
   });
 
   describe('Getters', () => {
@@ -145,7 +154,7 @@ describe('DigitalLink', () => {
       expect(identifier[idKey]).to.equal(DATA.identifier.value);
     });
 
-    it('should return the key qualifier', () => {
+    it('should return one key qualifier', () => {
       const value = createUsingSetters().getKeyQualifier(DATA.batchQualifier.key);
       
       expect(value).to.equal(DATA.batchQualifier.value);
@@ -161,7 +170,7 @@ describe('DigitalLink', () => {
       expect(value).to.deep.equal(expected);
     });
 
-    it('should return the attributes', () => {
+    it('should return one attribute', () => {
       const setterDl = createUsingSetters();
 
       let value = setterDl.getAttribute(DATA.bestBeforeAttribute.key);
@@ -182,7 +191,13 @@ describe('DigitalLink', () => {
     });
   });
 
-  describe('Validation', () => {
+  describe('Digital Link Generation', () => {
+    it('should generate the correct full string', () => {
+      expect(createUsingSetters().toString()).to.equal(DATA.result);
+    });
+  });
+
+  describe('Digital Link Validation', () => {
     it('should validate using the grammar', () => {
       expect(createUsingSetters().isValid()).to.equal(true);
     });

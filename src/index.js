@@ -8,45 +8,41 @@ const {
  * @param {object} dl - The DigitalLink (this).
  * @param {string} str - String input containing Digital Link.
  */
-const constructFromString = (dl, str) => {
-  // http(s)://domain
+const decode = (dl, str) => {
   if (!str.includes('http') || !str.includes('://')) {
     throw new Error('String input must contain http(s) protocol');
   }
 
-  let start = str.indexOf('://') + 3;
-  let end = str.indexOf('/', start);
-  dl.domain = str.substring(0, end > -1 ? end : str.length);
-
-  if (end === -1) {
+  if (str.split('/').length < 5) {
     throw new Error('Must contain at least an identifier');
   }
-  
+
+  // http(s)://domain.xyz
+  dl.domain = str.substring(0, str.indexOf('/', str.indexOf('://') + 3));
+  str = str.substring(dl.domain.length);
+
   // /first/identifier
-  start = str.indexOf('/', start) + 1;
-  end = str.indexOf('/', start);
-  const idName = str.substring(start, end);
-  start = str.indexOf('/', end) + 1;
-  end = str.indexOf('/', start);
-  dl.identifier[idName] = end > -1 ? str.substring(start, end) : str.substring(start);
-  
-  // /x/y until query
-  let segments = str.substring(str.indexOf('?') + 1)
+  const segments = (str.includes('?') ? str.substring(0, str.indexOf('?')) : str)
     .split('/')
-    .filter(item => item.length);
-  while (segments.length > 0) {
+    .filter(p => p.length);
+  dl.identifier[segments.shift()] = segments.shift();
+
+  // /x/y until query
+  while(segments.length) {
     dl.keyQualifiers[segments.shift()] = segments.shift();
   }
 
-  // ?x=y... attributes
-  if (str.includes('?')) {
-    str.substring(str.indexOf('?') + 1)
-      .split('&')
-      .forEach((pair) => {
-        const [key, value] = pair.split('=');
-        dl.attributes[key] = value;
-      });
+  if (!str.includes('?')) {
+    return;
   }
+
+  // ?x=y...
+  str.substring(str.indexOf('?') + 1)
+    .split('&')
+    .forEach((pair) => {
+      const [key, value] = pair.split('=');
+      dl.attributes[key] = value;
+    });
 };
 
 /**
@@ -55,7 +51,7 @@ const constructFromString = (dl, str) => {
  * @param {object} dl - The DigitalLink (this).
  * @returns {string} The Digital Link in string form.
  */
-const buildString = (dl) => {
+const encode = (dl) => {
   let result = dl.domain;
 
   // Identifier
@@ -113,7 +109,7 @@ function DigitalLink (opts) {
   }
 
   if (typeof opts === 'string') {
-    constructFromString(_model, opts);
+    decode(_model, opts);
   }
 
   this.setDomain = (domain) => {
@@ -153,7 +149,7 @@ function DigitalLink (opts) {
 
   this.getAttributes = () => _model.attributes;
   
-  this.toString = () => buildString(_model);
+  this.toString = () => encode(_model);
   
   this.isValid = () => validate(this.toString());
 };
