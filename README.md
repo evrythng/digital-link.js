@@ -63,6 +63,18 @@ dl.setKeyQualifier('21', '43786');
 dl.setAttribute('thngId', 'UMwxDXBdUbxgtyRaR2HBrc4r');
 ```
 
+Setters can also be chained:
+
+```js
+const DigitalLink = require('evrythng-gs1-dl-sdk');
+
+const dl = new DigitalLink()
+  .setDomain('https://dlnkd.tn.gg')
+  .setIdentifier('01', '9780345418913')
+  .setKeyQualifier('21', '43786')
+  .setAttribute('thngId', 'UMwxDXBdUbxgtyRaR2HBrc4r');
+```
+
 
 ### Create from URL
 

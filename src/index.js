@@ -9,24 +9,29 @@ const {
  * @param {string} str - String input containing Digital Link.
  */
 const constructFromString = (dl, str) => {
-  // http(s)://domain/
+  // http(s)://domain
   if (!str.includes('http') || !str.includes('://')) {
     throw new Error('String input must contain http(s) protocol');
   }
 
   let start = str.indexOf('://') + 3;
-  dl.domain = str.substring('http', str.indexOf('/', start));
+  let end = str.indexOf('/', start);
+  dl.domain = str.substring(0, end > -1 ? end : str.length);
+
+  if (end === -1) {
+    throw new Error('Must contain at least an identifier');
+  }
   
   // /first/identifier
   start = str.indexOf('/', start) + 1;
-  let end = str.indexOf('/', start);
+  end = str.indexOf('/', start);
   const idName = str.substring(start, end);
   start = str.indexOf('/', end) + 1;
   end = str.indexOf('/', start);
-  dl.identifier[idName] = str.substring(start, end);
+  dl.identifier[idName] = end > -1 ? str.substring(start, end) : str.substring(start);
   
   // /x/y until query
-  let segments = str.substring(end, str.indexOf('?'))
+  let segments = str.substring(str.indexOf('?') + 1)
     .split('/')
     .filter(item => item.length);
   while (segments.length > 0) {
@@ -34,12 +39,14 @@ const constructFromString = (dl, str) => {
   }
 
   // ?x=y... attributes
-  str.substring(str.indexOf('?') + 1)
-    .split('&')
-    .forEach((pair) => {
-      const [key, value] = pair.split('=');
-      dl.attributes[key] = value;
-    });
+  if (str.includes('?')) {
+    str.substring(str.indexOf('?') + 1)
+      .split('&')
+      .forEach((pair) => {
+        const [key, value] = pair.split('=');
+        dl.attributes[key] = value;
+      });
+  }
 };
 
 /**
@@ -115,24 +122,36 @@ function DigitalLink (opts) {
     }
 
     _model.domain = domain;
+    return this;
   };
 
   this.setIdentifier = (key, value) => {
     assertStringPair(key, value);
     _model.identifier = { [key]: value };
+    return this;
   };
 
-  this.setKeyQualifier = (key, value) => assignStringPair(_model, 'keyQualifiers', key, value);
+  this.setKeyQualifier = (key, value) => {
+    assignStringPair(_model, 'keyQualifiers', key, value);
+    return this;
+  };
   
-  this.setAttribute = (key, value) => assignStringPair(_model, 'attributes', key, value);
+  this.setAttribute = (key, value) => {
+    assignStringPair(_model, 'attributes', key, value);
+    return this;
+  };
   
   this.getDomain = () => _model.domain;
   
   this.getIdentifier = () => _model.identifier;
   
   this.getKeyQualifier = key => _model.keyQualifiers[key];
+
+  this.getKeyQualifiers = () => _model.keyQualifiers;
   
   this.getAttribute = key => _model.attributes[key];
+
+  this.getAttributes = () => _model.attributes;
   
   this.toString = () => buildString(_model);
   
