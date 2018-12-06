@@ -48,7 +48,7 @@ const dl = new DigitalLink({
 ```
 
 
-### Create with setters
+### Create with setters
 
 The equivalent to the object-based example above can also be constructed 
 piecemeal using setters:
