@@ -73,8 +73,16 @@ const assignStringPair = (dl, prop, key, value) => {
   dl[prop][key] = value;
 };
 
-const between = (str, a, b) => {
-  let matches = str.match(`(?<=${a})(.*?)(?=${b})`);
+/**
+ * Extract text between two markers using a regex.
+ *
+ * @param {string} str - String to search.
+ * @param {string} start - String immediately before the output.
+ * @param {string} end - String immediately after the output.
+ * @returns {string} String contained between start and end.
+ */
+const between = (str, start, end) => {
+  let matches = str.match(`(?<=${start})(.*?)(?=${end})`);
   return matches ? matches[0] : '';
 };
 
@@ -86,15 +94,15 @@ const between = (str, a, b) => {
  * @returns {object[]} Array of objects describing the validation trace.
  */
 const getTrace = (inputStr) => {
-  const startRule = getStartRule(inputStr);
   const parser = new apglib.parser();
   parser.trace = new apglib.trace();
 
-  const result = parser.parse(GRAMMAR, startRule, apglib.utils.stringToChars(inputStr), []);
+  const result = parser.parse(GRAMMAR, getStartRule(inputStr), apglib.utils.stringToChars(inputStr), []);
   const traceHtml = parser.trace.toHtmlPage('ascii', 'Parsing details:')
     .replace('display mode: ASCII', '');
-  const table = traceHtml.substring(traceHtml.indexOf('<table '), traceHtml.indexOf('</table>'));
-  const rows = table.split('<tr>').filter(item => item.includes('&uarr;M'));
+  const rows = traceHtml.substring(traceHtml.indexOf('<table '), traceHtml.indexOf('</table>'))
+    .split('<tr>')
+    .filter(item => item.includes('&uarr;M'));
   const trace = rows.filter(row => row.includes('apg-match'))
     .map((row) => {
       const rule = row.match(/((?<=\()(.*?)(?=\)))/)[0];
