@@ -26,7 +26,7 @@ const DATA = {
   result: 'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh',
 };
 
-const createSetterDL = () => {
+const createUsingSetters = () => {
   const dl = new DigitalLink();
   dl.setDomain(DATA.domain);
   dl.setIdentifier(DATA.identifier.key, DATA.identifier.value);
@@ -37,7 +37,7 @@ const createSetterDL = () => {
   return dl;
 };
 
-const createObjectDL = () => new DigitalLink({
+const createUsingObject = () => new DigitalLink({
   domain: DATA.domain,
   identifier: { [DATA.identifier.key]: DATA.identifier.value },
   keyQualifiers: {
@@ -50,9 +50,9 @@ const createObjectDL = () => new DigitalLink({
   },
 });
 
-const createStringDL = () => new DigitalLink(DATA.result);
+const createUsingString = () => new DigitalLink(DATA.result);
 
-const createChainedDL = () => new DigitalLink()
+const createUsingChain = () => new DigitalLink()
   .setDomain(DATA.domain)
   .setIdentifier(DATA.identifier.key, DATA.identifier.value)
   .setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value)
@@ -70,19 +70,19 @@ describe('DigitalLink', () => {
 
   describe('Construction', () => {
     it('should construct using setters', () => {
-      expect(createSetterDL).to.not.throw();
+      expect(createUsingSetters).to.not.throw();
     });
 
     it('should construct from an options object', () => {
-      expect(createObjectDL).to.not.throw();
+      expect(createUsingObject).to.not.throw();
     });
 
     it('should construct from a valid input URL', () => {
-      expect(createStringDL).to.not.throw();
+      expect(createUsingString).to.not.throw();
     });
 
     it('should construct using chained setters', () => {
-      expect(createChainedDL).to.not.throw();
+      expect(createUsingChain).to.not.throw();
     });
 
     it('should throw for a missing protocol', () => {
@@ -107,7 +107,7 @@ describe('DigitalLink', () => {
     });
 
     it('should generate the correct full string', () => {
-      expect(createSetterDL().toString()).to.equal(DATA.result);
+      expect(createUsingSetters().toString()).to.equal(DATA.result);
     });
 
     it('should build from string - domain + identifier', () => {
@@ -126,19 +126,19 @@ describe('DigitalLink', () => {
     });
 
     it('should produce the same regardless of construction method', () => {
-      const setterDl = createSetterDL();
-      expect(setterDl.toString()).to.equal(createObjectDL().toString());
-      expect(setterDl.toString()).to.equal(createStringDL().toString());
+      const url = createUsingSetters().toString();
+      expect(url).to.equal(createUsingObject().toString());
+      expect(url).to.equal(createUsingString().toString());
     });
   });
 
   describe('Getters', () => {
     it('should return the domain', () => {
-      expect(createSetterDL().getDomain()).to.equal(DATA.domain);
+      expect(createUsingSetters().getDomain()).to.equal(DATA.domain);
     });
 
     it('should return the identifier', () => {
-      const identifier = createSetterDL().getIdentifier();
+      const identifier = createUsingSetters().getIdentifier();
       const [idKey] = Object.keys(identifier);
       
       expect(idKey).to.equal(DATA.identifier.key);
@@ -146,13 +146,13 @@ describe('DigitalLink', () => {
     });
 
     it('should return the key qualifier', () => {
-      const value = createSetterDL().getKeyQualifier(DATA.batchQualifier.key);
+      const value = createUsingSetters().getKeyQualifier(DATA.batchQualifier.key);
       
       expect(value).to.equal(DATA.batchQualifier.value);
     });
 
     it('should return all key qualifiers', () => {
-      const value = createSetterDL().getKeyQualifiers();
+      const value = createUsingSetters().getKeyQualifiers();
       const expected = {
         [DATA.serialQualifier.key]: DATA.serialQualifier.value,
         [DATA.batchQualifier.key]: DATA.batchQualifier.value,
@@ -162,7 +162,7 @@ describe('DigitalLink', () => {
     });
 
     it('should return the attributes', () => {
-      const setterDl = createSetterDL();
+      const setterDl = createUsingSetters();
 
       let value = setterDl.getAttribute(DATA.bestBeforeAttribute.key);
       expect(value).to.equal(DATA.bestBeforeAttribute.value);
@@ -172,7 +172,7 @@ describe('DigitalLink', () => {
     });
 
     it('should return all attributes', () => {
-      const value = createSetterDL().getAttributes();
+      const value = createUsingSetters().getAttributes();
       const expected = {
         [DATA.bestBeforeAttribute.key]: DATA.bestBeforeAttribute.value,
         [DATA.customAttribute.key]: DATA.customAttribute.value,
@@ -184,7 +184,7 @@ describe('DigitalLink', () => {
 
   describe('Validation', () => {
     it('should validate using the grammar', () => {
-      expect(createSetterDL().isValid()).to.equal(true);
+      expect(createUsingSetters().isValid()).to.equal(true);
     });
   });
 });
