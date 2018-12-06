@@ -1,0 +1,45 @@
+* {
+  font-family: sans-serif;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 10px 0px;
+}
+
+.paragraph {
+  text-align: center;
+  font-size: 1.0rem;
+  max-width: 80%;
+  margin: 20px auto;
+}
+
+.col-centered {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.input-url {
+  min-width: 400px;
+  max-width: 80%;
+  height: 25px;
+  text-align: center;
+  font-size: 1.0rem;
+  border: none;
+  border-bottom: solid 2px #0005;
+  background-color: white;
+  margin: 10px auto;
+}
+
+.input-url:focus {
+  border-bottom: solid 2px #000;
+  outline: none;
+}
