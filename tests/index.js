@@ -23,7 +23,8 @@ const DATA = {
     key: 'thngId',
     value: 'U5mQKGDpnymBwQwRakyBqeYh',
   },
-  result: 'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh',
+  url: 'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh',
+  jsonString: '{"domain":"https://gs1.evrythng.com","identifier":{"01":"9780345418913"},"keyQualifiers":{"10":"38737643","21":"58943"},"attributes":{"15":"230911","thngId":"U5mQKGDpnymBwQwRakyBqeYh"}}',
 };
 
 const createUsingSetters = () => {
@@ -50,7 +51,7 @@ const createUsingObject = () => new DigitalLink({
   },
 });
 
-const createUsingString = () => new DigitalLink(DATA.result);
+const createUsingString = () => new DigitalLink(DATA.url);
 
 const createUsingChain = () => new DigitalLink()
   .setDomain(DATA.domain)
@@ -192,8 +193,12 @@ describe('DigitalLink', () => {
   });
 
   describe('Digital Link Generation', () => {
-    it('should generate the correct full string', () => {
-      expect(createUsingSetters().toString()).to.equal(DATA.result);
+    it('should generate the correct URL string', () => {
+      expect(createUsingSetters().toString()).to.equal(DATA.url);
+    });
+
+    it('should generate the correct JSON string', () => {
+      expect(createUsingSetters().toJsonString()).to.equal(DATA.jsonString);
     });
   });
 

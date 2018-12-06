@@ -150,6 +150,8 @@ function DigitalLink (opts) {
   this.getAttributes = () => _model.attributes;
   
   this.toString = () => encode(_model);
+
+  this.toJsonString = () => JSON.stringify(_model);
   
   this.isValid = () => validate(this.toString());
 };
