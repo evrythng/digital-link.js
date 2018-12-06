@@ -15,13 +15,21 @@ const addQueryParams = (result, attributes) => Object.keys(attributes).reduce((r
 }, result);
 
 /**
+ * Get the top-level parser rule for the input string.
+ *
+ * @param {string} str - The input string.
+ * @returns {string} Either canonicalGS1webURI or customGS1webURI depending on format.
+ */
+const getStartRule = str => str.includes('id.gs1.org') ? 'canonicalGS1webURI' : 'customGS1webURI';
+
+/**
  * Run the apglib parser over the Digital Link string.
  *
  * @param {string} inputStr - The DigitalLink as a string.
  * @returns {boolean} true if the parser returns 'success', false otherwise.
  */
 const validate = (inputStr) => {
-  const startRule = inputStr.includes('id.gs1.org') ? 'canonicalGS1webURI' : 'customGS1webURI';
+  const startRule = getStartRule(inputStr);
   const parser = new apglib.parser();
   const result = parser.parse(GRAMMAR, startRule, apglib.utils.stringToChars(inputStr), []);
   return result.success;
@@ -65,10 +73,45 @@ const assignStringPair = (dl, prop, key, value) => {
   dl[prop][key] = value;
 };
 
+const between = (str, a, b) => {
+  let matches = str.match(`(?<=${a})(.*?)(?=${b})`);
+  return matches ? matches[0] : '';
+};
+
+/**
+ * Get a validation trace showing which parts of the input matched which rules.
+ * If the last item has a remainder, that is the part that didn't match.
+ *
+ * @param {string} inputStr - The input string.
+ * @returns {object[]} Array of objects describing the validation trace.
+ */
+const getTrace = (inputStr) => {
+  const startRule = getStartRule(inputStr);
+  const parser = new apglib.parser();
+  parser.trace = new apglib.trace();
+
+  const result = parser.parse(GRAMMAR, startRule, apglib.utils.stringToChars(inputStr), []);
+  const traceHtml = parser.trace.toHtmlPage('ascii', 'Parsing details:')
+    .replace('display mode: ASCII', '');
+  const table = traceHtml.substring(traceHtml.indexOf('<table '), traceHtml.indexOf('</table>'));
+  const rows = table.split('<tr>').filter(item => item.includes('&uarr;M'));
+  const trace = rows.filter(row => row.includes('apg-match'))
+    .map((row) => {
+      const rule = row.match(/((?<=\()(.*?)(?=\)))/)[0];
+      const sample = row.substring(row.indexOf(')'));
+      const match = between(sample, 'match">', '<');
+      const remainder = between(sample, 'remainder">', '<');
+      return { rule, match, remainder };
+    })
+    .filter(item => item.match.length > 1);
+  return { trace, success: result.success };
+};
+
 module.exports = {
   addQueryParams,
   assertPropertyType,
   assertStringPair,
   assignStringPair,
   validate,
+  getTrace,
 };

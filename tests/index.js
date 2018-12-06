@@ -206,5 +206,51 @@ describe('DigitalLink', () => {
     it('should validate using the grammar', () => {
       expect(createUsingSetters().isValid()).to.equal(true);
     });
+
+    it('should parse a valid URL trace history', () => {
+      const expected = { 
+        trace: [ 
+          { rule: 'scheme', match: 'https', remainder: '://gs1.evrythng.com/01/9780345418913' },
+          { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
+          { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
+          { rule: 'hostname', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
+          { rule: 'customURIstem', match: 'https://gs1.evrythng.com', remainder: '/01/9780345418913' },
+          { rule: 'gtin-code', match: '01', remainder: '/9780345418913' },
+          { rule: 'gtin-value', match: '9780345418913', remainder: '' },
+          { rule: 'gtin-comp', match: '/01/9780345418913', remainder: '' },
+          { rule: 'gtin-path', match: '/01/9780345418913', remainder: '' },
+          { rule: 'gs1path', match: '/01/9780345418913', remainder: '' },
+          { rule: 'gs1uriPattern', match: '/01/9780345418913', remainder: '' },
+          { rule: 'customGS1webURI', match: 'https://gs1.evrythng.com/01/9780345418913', remainder: '' },
+        ],
+        success: true,
+      };
+
+      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+      expect(dl.getValidationTrace()).to.deep.equal(expected);
+    });
+
+    it('should parse an invalid URL trace history', () => {
+      const expected = { 
+        trace: [ 
+          { rule: 'scheme', match: 'https', remainder: '://gs1.evrythng.com/01/9780345418913d' },
+          { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
+          { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
+          { rule: 'hostname', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
+          { rule: 'customURIstem', match: 'https://gs1.evrythng.com', remainder: '/01/9780345418913d' },
+          { rule: 'gtin-code', match: '01', remainder: '/9780345418913d' },
+          { rule: 'gtin-value', match: '9780345418913', remainder: 'd' },
+          { rule: 'gtin-comp', match: '/01/9780345418913', remainder: 'd' },
+          { rule: 'gtin-path', match: '/01/9780345418913', remainder: 'd' },
+          { rule: 'gs1path', match: '/01/9780345418913', remainder: 'd' },
+          { rule: 'gs1uriPattern', match: '/01/9780345418913', remainder: 'd' },
+          { rule: 'customGS1webURI', match: 'https://gs1.evrythng.com/01/9780345418913', remainder: 'd' },
+        ],
+        success: false,
+      };
+
+      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913d');
+      expect(dl.getValidationTrace()).to.deep.equal(expected);
+    });
   });
 });

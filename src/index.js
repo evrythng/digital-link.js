@@ -1,5 +1,5 @@
 const {
-  addQueryParams, assertPropertyType, assertStringPair, assignStringPair, validate,
+  addQueryParams, assertPropertyType, assertStringPair, assignStringPair, validate, getTrace,
 } = require('./util');
 
 /**
@@ -154,6 +154,8 @@ function DigitalLink (opts) {
   this.toJsonString = () => JSON.stringify(_model);
   
   this.isValid = () => validate(this.toString());
+
+  this.getValidationTrace = () => getTrace(this.toString());
 };
 
 module.exports = DigitalLink;
