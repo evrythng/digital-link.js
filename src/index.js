@@ -149,13 +149,13 @@ function DigitalLink (opts) {
 
   this.getAttributes = () => _model.attributes;
   
-  this.toString = () => encode(_model);
+  this.toUrlString = () => encode(_model);
 
   this.toJsonString = () => JSON.stringify(_model);
   
-  this.isValid = () => validate(this.toString());
+  this.isValid = () => validate(this.toUrlString());
 
-  this.getValidationTrace = () => getTrace(this.toString());
+  this.getValidationTrace = () => getTrace(this.toUrlString());
 };
 
 module.exports = DigitalLink;

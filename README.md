@@ -92,7 +92,7 @@ const dl = new DigitalLink(url);
 A `DigitalLink` object can transform itself into a string URL representation:
 
 ```js
-const url = dl.toString();
+const url = dl.toUrlString();
 
 console.log(url);
 ```

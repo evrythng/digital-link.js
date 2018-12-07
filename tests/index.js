@@ -113,9 +113,9 @@ describe('DigitalLink', () => {
     });
 
     it('should produce the same regardless of construction method', () => {
-      const url = createUsingSetters().toString();
-      expect(url).to.equal(createUsingObject().toString());
-      expect(url).to.equal(createUsingString().toString());
+      const url = createUsingSetters().toUrlString();
+      expect(url).to.equal(createUsingObject().toUrlString());
+      expect(url).to.equal(createUsingString().toUrlString());
     });
   });
 
@@ -194,7 +194,7 @@ describe('DigitalLink', () => {
 
   describe('Digital Link Generation', () => {
     it('should generate the correct URL string', () => {
-      expect(createUsingSetters().toString()).to.equal(DATA.url);
+      expect(createUsingSetters().toUrlString()).to.equal(DATA.url);
     });
 
     it('should generate the correct JSON string', () => {
