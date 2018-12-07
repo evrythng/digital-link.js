@@ -30,7 +30,7 @@
 }
 
 .input-url {
-  min-width: 600px;
+  min-width: 700px;
   max-width: 80%;
   height: 50px;
   text-align: center;
@@ -68,7 +68,7 @@
 .state-view {
   position: fixed;
   width: 100%;
-  color: #0009;
+  color: #0005;
   border: none;
   font-size: 1.0rem;
   bottom: 0;

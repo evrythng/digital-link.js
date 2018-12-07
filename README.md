@@ -87,7 +87,7 @@ const dl = new DigitalLink(url);
 ```
 
 
-### URL Generation
+### URL and JSON Generation
 
 A `DigitalLink` object can transform itself into a string URL representation:
 
@@ -95,6 +95,18 @@ A `DigitalLink` object can transform itself into a string URL representation:
 const url = dl.toString();
 
 console.log(url);
+```
+
+It is also possible to view the object makeup of the `DigitalLink`. This can
+then be used to construct the same `DigitalLink` from an object.
+
+```js
+// Get JSON representation
+const jsonString = dl.toJsonString();
+console.log(jsonString);
+
+// Create new DigitalLink using same data
+const dl2 = new DigitalLink(JSON.parse(jsonString));
 ```
 
 
@@ -107,3 +119,21 @@ const isValid = dl.isValid();
 
 console.log(`Is the Digital Link valid? ${isValid}`);
 ```
+
+
+### Testing App
+
+The `test-app` directory contains a simple app built with 
+[Hyperapp](https://github.com/jorgebucaran/hyperapp) that demonstrates how to
+easily build a simple GS1 Digital Link verification tool using this SDK.
+
+To use it:
+
+1. `cd test-app && npm i`
+2. `npm run serve`
+3. Open `http://localhost:1234/index.html` in a browser of choice.
+4. Enter or type a GS1 Digital Link, and observe the validity. 
+
+The trace steps (which matched a parser rule) are also shown, allowing you to 
+see which parts of your input did not match any rule. The output of 
+`toJsonString()` is also shown as an insight into the make-up of the URL itself.

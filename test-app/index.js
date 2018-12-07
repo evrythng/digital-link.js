@@ -70,7 +70,7 @@ const view = (state, actions) => (
 
     <TraceView trace={state.trace}/>
 
-    <textarea class="state-view">{state.jsonString}</textarea>
+    <textarea class="state-view" disabled>{state.jsonString}</textarea>
   </div>
 );
 
