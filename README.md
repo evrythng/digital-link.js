@@ -123,6 +123,8 @@ console.log(`Is the Digital Link valid? ${isValid}`);
 
 ### Testing App
 
+![](test-app/assets/screenshot.png)
+
 The `test-app` directory contains a simple app built with 
 [Hyperapp](https://github.com/jorgebucaran/hyperapp) that demonstrates how to
 easily build a simple GS1 Digital Link verification tool using this SDK.
