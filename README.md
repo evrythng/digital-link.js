@@ -12,7 +12,7 @@ SDK for creating, verifying, and representing/transferring GS1 Digital Links.
 ## Usage
 
 The `DigitalLink` object can be created in three ways - with options, using 
-setters, or an existing URL string. Either method of construction will produce 
+setters, or an existing URL string. Either method of creation will produce 
 the same result.
 
 
@@ -31,9 +31,9 @@ The object can contain the following items:
 An example is shown below:
 
 ```js
-const DigitalLink = require('evrythng-gs1-dl-sdk');
+const { DigitalLink } = require('evrythng-gs1-dl-sdk');
 
-const dl = new DigitalLink({
+const dl = DigitalLink({
   domain: 'https://dlnkd.tn.gg',
   identifier: {
     '01': '9780345418913',
@@ -50,13 +50,13 @@ const dl = new DigitalLink({
 
 ### Create with setters
 
-The equivalent to the object-based example above can also be constructed 
+The equivalent to the object-based example above can also be created 
 piecemeal using setters:
 
 ```js
-const DigitalLink = require('evrythng-gs1-dl-sdk');
+const { DigitalLink } = require('evrythng-gs1-dl-sdk');
 
-const dl = new DigitalLink();
+const dl = DigitalLink();
 dl.setDomain('https://dlnkd.tn.gg');
 dl.setIdentifier('01', '9780345418913');
 dl.setKeyQualifier('21', '43786');
@@ -66,9 +66,9 @@ dl.setAttribute('thngId', 'UMwxDXBdUbxgtyRaR2HBrc4r');
 Setters can also be chained:
 
 ```js
-const DigitalLink = require('evrythng-gs1-dl-sdk');
+const { DigitalLink } = require('evrythng-gs1-dl-sdk');
 
-const dl = new DigitalLink()
+const dl = DigitalLink()
   .setDomain('https://dlnkd.tn.gg')
   .setIdentifier('01', '9780345418913')
   .setKeyQualifier('21', '43786')
@@ -83,7 +83,7 @@ A `DigitalLink` object can also be created using an existing string:
 ```js
 const url = 'https://dlnkd.tn.gg/01/9780345418913/21/43786?thngId=UMwxDXBdUbxgtyRaR2HBrc4r';
 
-const dl = new DigitalLink(url);
+const dl = DigitalLink(url);
 ```
 
 
@@ -105,14 +105,14 @@ then be used to construct the same `DigitalLink` from an object.
 const jsonString = dl.toJsonString();
 console.log(jsonString);
 
-// Create new DigitalLink using same data
-const dl2 = new DigitalLink(JSON.parse(jsonString));
+// Create DigitalLink using same data
+const dl2 = DigitalLink(JSON.parse(jsonString));
 ```
 
 
 ### URL Validation
 
-Once constructed, the `DigitalLink` object can validate itself:
+Once created, the `DigitalLink` object can validate itself:
 
 ```js
 const isValid = dl.isValid();
@@ -124,7 +124,7 @@ console.log(`Is the Digital Link valid? ${isValid}`);
 ### Unit Tests
 
 Unit tests can be run with the `npm test` command, and cover all methods, 
-construction methods, and output formats.
+creation methods, and output formats.
 
 
 ### Testing App

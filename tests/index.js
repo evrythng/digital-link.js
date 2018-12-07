@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const DigitalLink = require('../');
+const { DigitalLink } = require('../');
 
 const DATA = {
   domain: 'https://gs1.evrythng.com',
@@ -28,7 +28,7 @@ const DATA = {
 };
 
 const createUsingSetters = () => {
-  const dl = new DigitalLink();
+  const dl = DigitalLink();
   dl.setDomain(DATA.domain);
   dl.setIdentifier(DATA.identifier.key, DATA.identifier.value);
   dl.setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value);
@@ -38,7 +38,7 @@ const createUsingSetters = () => {
   return dl;
 };
 
-const createUsingObject = () => new DigitalLink({
+const createUsingObject = () => DigitalLink({
   domain: DATA.domain,
   identifier: { [DATA.identifier.key]: DATA.identifier.value },
   keyQualifiers: {
@@ -51,9 +51,9 @@ const createUsingObject = () => new DigitalLink({
   },
 });
 
-const createUsingString = () => new DigitalLink(DATA.url);
+const createUsingString = () => DigitalLink(DATA.url);
 
-const createUsingChain = () => new DigitalLink()
+const createUsingChain = () => DigitalLink()
   .setDomain(DATA.domain)
   .setIdentifier(DATA.identifier.key, DATA.identifier.value)
   .setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value)
@@ -63,31 +63,31 @@ const createUsingChain = () => new DigitalLink()
 
 describe('DigitalLink', () => {
   describe('Exports', () => {
-    it('should export a constructor function', () => {
+    it('should export a creation function', () => {
       expect(DigitalLink).to.be.a('function');
-      expect(() => new DigitalLink()).to.not.throw();
+      expect(() => DigitalLink()).to.not.throw();
     });
   });
 
-  describe('Construction', () => {
-    it('should construct using setters', () => {
+  describe('Creation', () => {
+    it('should create using setters', () => {
       expect(createUsingSetters).to.not.throw();
     });
 
-    it('should construct from an options object', () => {
+    it('should create from an options object', () => {
       expect(createUsingObject).to.not.throw();
     });
 
-    it('should construct from a valid input URL', () => {
+    it('should create from a valid input URL', () => {
       expect(createUsingString).to.not.throw();
     });
 
-    it('should construct using chained setters', () => {
+    it('should create using chained setters', () => {
       expect(createUsingChain).to.not.throw();
     });
 
-    it('should build from string - domain + identifier', () => {
-      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+    it('should create from string - domain + identifier', () => {
+      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
       expect(dl.getIdentifier()).to.deep.equal({ 
@@ -95,16 +95,25 @@ describe('DigitalLink', () => {
       });
     });
 
-    it('should build from string - domain + identifier + 1 key qualifier', () => {
-      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643');
+    it('should create from string - domain + identifier + 1 key qualifier', () => {
+      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
       expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
       expect(dl.getKeyQualifier('10')).to.equal('38737643');
     });
 
-    it('should build from string - domain + identifier + 1 key qualifier + 1 attribute', () => {
-      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643?15=230911');
+    it('should create from string - domain + identifier + 2 key qualifiers', () => {
+      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943');
+
+      expect(dl.getDomain()).to.equal(DATA.domain);
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getKeyQualifier('10')).to.equal('38737643');
+      expect(dl.getKeyQualifier('21')).to.equal('58943');
+    });
+
+    it('should create from string - domain + identifier + 1 key qualifier + 1 attribute', () => {
+      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643?15=230911');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
       expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
@@ -112,33 +121,49 @@ describe('DigitalLink', () => {
       expect(dl.getAttribute('15')).to.equal('230911');
     });
 
+    it('should create from string - domain + identifier + 2 key qualifiers + 2 attributes', () => {
+      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh');
+
+      expect(dl.getDomain()).to.equal(DATA.domain);
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getKeyQualifier('10')).to.equal('38737643');
+      expect(dl.getKeyQualifier('21')).to.equal('58943');
+      expect(dl.getAttribute('15')).to.equal('230911');
+      expect(dl.getAttribute('thngId')).to.equal('U5mQKGDpnymBwQwRakyBqeYh');
+    });
+
     it('should produce the same regardless of construction method', () => {
-      const url = createUsingSetters().toUrlString();
-      expect(url).to.equal(createUsingObject().toUrlString());
-      expect(url).to.equal(createUsingString().toUrlString());
+      const expected = createUsingSetters().toUrlString();
+      expect(createUsingObject().toUrlString()).to.equal(expected);
+      expect(createUsingString().toUrlString()).to.equal(expected);
+      expect(createUsingSetters().toUrlString()).to.equal(expected);
+      expect(createUsingChain().toUrlString()).to.equal(expected);
+    });
+
+    it('should not allow access to underlying data', () => {
+      const dl = DigitalLink(DATA.url);
+      expect(dl.model).to.equal(undefined);
     });
   });
 
-  describe('Invalid Construction', () => {
+  describe('Invalid Creation', () => {
     it('should throw for a missing protocol', () => {
-      expect(() => new DigitalLink('badurl')).to.throw();
+      expect(() => DigitalLink('badurl')).to.throw();
     });
 
     it('should throw for missing identifier (object)', () => {
-      const construct = () => {
-        new DigitalLink({
-          keyQualifiers: {
-            [DATA.batchQualifier.key]: DATA.batchQualifier.value,
-            [DATA.serialQualifier.key]: DATA.serialQualifier.value,
-          },
-        });
-      };
+      const create = () => DigitalLink({
+        keyQualifiers: {
+          [DATA.batchQualifier.key]: DATA.batchQualifier.value,
+          [DATA.serialQualifier.key]: DATA.serialQualifier.value,
+        },
+      });
 
-      expect(construct).to.throw();
+      expect(create).to.throw();
     });
 
     it('should throw for missing identifier (string)', () => {
-      expect(() => new DigitalLink(DATA.domain)).to.throw();
+      expect(() => DigitalLink(DATA.domain)).to.throw();
     });
   });
 
@@ -192,7 +217,7 @@ describe('DigitalLink', () => {
     });
   });
 
-  describe('Digital Link Generation', () => {
+  describe('Generation', () => {
     it('should generate the correct URL string', () => {
       expect(createUsingSetters().toUrlString()).to.equal(DATA.url);
     });
@@ -202,7 +227,7 @@ describe('DigitalLink', () => {
     });
   });
 
-  describe('Digital Link Validation', () => {
+  describe('Validation', () => {
     it('should validate using the grammar', () => {
       expect(createUsingSetters().isValid()).to.equal(true);
     });
@@ -226,7 +251,7 @@ describe('DigitalLink', () => {
         success: true,
       };
 
-      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
       expect(dl.getValidationTrace()).to.deep.equal(expected);
     });
 
@@ -249,7 +274,7 @@ describe('DigitalLink', () => {
         success: false,
       };
 
-      const dl = new DigitalLink('https://gs1.evrythng.com/01/9780345418913d');
+      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913d');
       expect(dl.getValidationTrace()).to.deep.equal(expected);
     });
   });

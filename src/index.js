@@ -14,7 +14,7 @@ const decode = (dl, str) => {
   }
 
   if (str.split('/').length < 5 || str.split('/')[4].length === 0) {
-    throw new Error('Must contain at least an identifier');
+    throw new Error('Must contain at least the identifier');
   }
 
   // http(s)://domain.xyz
@@ -32,17 +32,15 @@ const decode = (dl, str) => {
     dl.keyQualifiers[segments.shift()] = segments.shift();
   }
 
-  if (!str.includes('?')) {
-    return;
-  }
-
   // ?x=y...
-  str.substring(str.indexOf('?') + 1)
-    .split('&')
-    .forEach((pair) => {
-      const [key, value] = pair.split('=');
-      dl.attributes[key] = value;
-    });
+  if (str.includes('?')) {
+    str.substring(str.indexOf('?') + 1)
+      .split('&')
+      .forEach((pair) => {
+        const [key, value] = pair.split('=');
+        dl.attributes[key] = value;
+      }); 
+  }
 };
 
 /**
@@ -77,85 +75,82 @@ const encode = (dl) => {
  * Construct a DigitalLink either from object params, a string, or built using
  * the available setters.
  *
- * @constructor
  * @param {(object|string)} opts - Optional construction object or string.
  */
-function DigitalLink (opts) {
+const DigitalLink = (opts) => {
   // Model should only be manipulated through getters and setters
-  const _model = {
-    domain: '',
-    identifier: {},
-    keyQualifiers: {},
-    attributes: {},
+  const model = Symbol('model');
+  const result = {
+    [model]: {
+      domain: '',
+      identifier: {},
+      keyQualifiers: {},
+      attributes: {},
+    },
   };
 
   if (typeof opts === 'object') {
     // Domain and identifier are required
     assertPropertyType(opts, 'domain', 'string');
-    _model.domain = opts.domain;
+    result[model].domain = opts.domain;
     assertPropertyType(opts, 'identifier', 'object');
-    _model.identifier = opts.identifier;
+    result[model].identifier = opts.identifier;
 
     // The rest are optional
     if (opts.keyQualifiers) {
       assertPropertyType(opts, 'keyQualifiers', 'object');
-      _model.keyQualifiers = opts.keyQualifiers;
+      result[model].keyQualifiers = opts.keyQualifiers;
     }
 
     if (opts.attributes) {
       assertPropertyType(opts, 'attributes', 'object');
-      _model.attributes = opts.attributes;
+      result[model].attributes = opts.attributes;
     }
   }
 
   if (typeof opts === 'string') {
-    decode(_model, opts);
+    decode(result[model], opts);
   }
 
-  this.setDomain = (domain) => {
+  result.setDomain = (domain) => {
     if (typeof domain !== 'string') {
       throw new Error('domain must be a string');
     }
 
-    _model.domain = domain;
-    return this;
+    result[model].domain = domain;
+    return result;
   };
 
-  this.setIdentifier = (key, value) => {
+  result.setIdentifier = (key, value) => {
     assertStringPair(key, value);
-    _model.identifier = { [key]: value };
-    return this;
+    result[model].identifier = { [key]: value };
+    return result;
   };
 
-  this.setKeyQualifier = (key, value) => {
-    assignStringPair(_model, 'keyQualifiers', key, value);
-    return this;
+  result.setKeyQualifier = (key, value) => {
+    assignStringPair(result[model], 'keyQualifiers', key, value);
+    return result;
   };
   
-  this.setAttribute = (key, value) => {
-    assignStringPair(_model, 'attributes', key, value);
-    return this;
+  result.setAttribute = (key, value) => {
+    assignStringPair(result[model], 'attributes', key, value);
+    return result;
   };
   
-  this.getDomain = () => _model.domain;
-  
-  this.getIdentifier = () => _model.identifier;
-  
-  this.getKeyQualifier = key => _model.keyQualifiers[key];
+  result.getDomain = () => result[model].domain;
+  result.getIdentifier = () => result[model].identifier;
+  result.getKeyQualifier = key => result[model].keyQualifiers[key];
+  result.getKeyQualifiers = () => result[model].keyQualifiers;
+  result.getAttribute = key => result[model].attributes[key];
+  result.getAttributes = () => result[model].attributes;
+  result.toUrlString = () => encode(result[model]);
+  result.toJsonString = () => JSON.stringify(result[model]);
+  result.isValid = () => validate(result.toUrlString());
+  result.getValidationTrace = () => getTrace(result.toUrlString());
 
-  this.getKeyQualifiers = () => _model.keyQualifiers;
-  
-  this.getAttribute = key => _model.attributes[key];
-
-  this.getAttributes = () => _model.attributes;
-  
-  this.toUrlString = () => encode(_model);
-
-  this.toJsonString = () => JSON.stringify(_model);
-  
-  this.isValid = () => validate(this.toUrlString());
-
-  this.getValidationTrace = () => getTrace(this.toUrlString());
+  return result;
 };
 
-module.exports = DigitalLink;
+module.exports = {
+  DigitalLink,
+}

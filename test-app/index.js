@@ -1,6 +1,6 @@
 import { app, h } from 'hyperapp';
 
-const DigitalLink = require('evrythng-gs1-dl-sdk');
+const { DigitalLink } = require('evrythng-gs1-dl-sdk');
 
 const state = {
   url: '',
@@ -19,7 +19,7 @@ const actions = {
   // Tasks
   doValidation: () => (state, actions) => {
     try {
-      const dl = new DigitalLink(state.url);
+      const dl = DigitalLink(state.url);
       actions.setIsValid(dl.isValid());
       actions.setJsonString(dl.toJsonString());
       actions.setTrace(dl.getValidationTrace().trace);
