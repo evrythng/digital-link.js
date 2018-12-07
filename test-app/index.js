@@ -3,17 +3,20 @@ import { app, h } from 'hyperapp';
 const DigitalLink = require('evrythng-gs1-dl-sdk');
 
 const state = {
-  url: 'https://example.com/01/38464783647346',
+  url: '',
   jsonString: '',
-  isValid: true,
-  trace: {},
+  isValid: false,
+  trace: [],
 };
 
 const actions = {
+  // Setters
   setUrl: url => state => ({ url }),
   setJsonString: jsonString => state => ({ jsonString }),
   setIsValid: isValid => state => ({ isValid }),
   setTrace: trace => state => ({ trace }),
+
+  // Tasks
   doValidation: () => (state, actions) => {
     try {
       const dl = new DigitalLink(state.url);
@@ -31,26 +34,18 @@ const actions = {
 
 const Paragraph = (props, children) => <div class="paragraph">{children}</div>;
 
-const TraceView = ({ trace }) => {
-  if (!trace.length) {
-    return;
-  }
-
-  return (
-    <div class="trace-wrapper">
-      <table>
-        <tr><th>Step</th><th>Rule</th><th>Matched</th><th>Remainder</th></tr>
-        {trace.map((item, i) => {
-          return (
-            <tr class="trace-item">
-              <td>{i + 1}</td><td>{item.rule}</td><td>{item.match}</td><td>{item.remainder}</td>
-            </tr>
-          );
-        })}
-      </table>
-    </div>
-  );
-};
+const TraceView = ({ trace }) => (trace.length > 0 && 
+  <div class="trace-wrapper">
+    <table>
+      <tr><th>Step</th><th>Rule</th><th>Matched</th><th>Remainder</th></tr>
+      {trace.map((item, i) => (
+        <tr class="trace-item">
+          <td>{i + 1}</td><td>{item.rule}</td><td>{item.match}</td><td>{item.remainder}</td>
+        </tr>
+      ))}
+    </table>
+  </div>
+);
 
 const view = (state, actions) => (
   <div class="col-centered">
@@ -64,8 +59,7 @@ const view = (state, actions) => (
       }}/>
     <Paragraph>
       Powered by the <a href="https://github.com/evrythng/evrythng-gs1-dl-sdk" target="_blank">
-        evrythng-gs1-dl-sdk
-      </a> SDK.
+        evrythng-gs1-dl-sdk</a> SDK.
     </Paragraph>
 
     <TraceView trace={state.trace}/>
