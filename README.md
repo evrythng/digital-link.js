@@ -121,6 +121,12 @@ console.log(`Is the Digital Link valid? ${isValid}`);
 ```
 
 
+### Unit Tests
+
+Unit tests can be run with the `npm test` command, and cover all methods, 
+construction methods, and output formats.
+
+
 ### Testing App
 
 ![](test-app/assets/screenshot.png)
