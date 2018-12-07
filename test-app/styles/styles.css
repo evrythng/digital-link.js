@@ -5,14 +5,14 @@
 .title {
   text-align: center;
   font-size: 1.5rem;
-  padding: 10px 0px;
+  padding: 140px px 0px 0px;
 }
 
 .paragraph {
   text-align: center;
   font-size: 1.0rem;
   max-width: 80%;
-  margin: 20px auto;
+  margin: 20px auto 0px auto;
 }
 
 .col-centered {
@@ -20,6 +20,8 @@
   flex-direction: column;
   width: 100%;
   text-align: center;
+  justify-content: center;
+  height: 100vh;
 }
 
 .row {
@@ -28,11 +30,11 @@
 }
 
 .input-url {
-  min-width: 400px;
+  min-width: 600px;
   max-width: 80%;
-  height: 25px;
+  height: 50px;
   text-align: center;
-  font-size: 1.0rem;
+  font-size: 1.5rem;
   border: none;
   border-bottom: solid 2px #0005;
   background-color: white;
@@ -42,4 +44,31 @@
 .input-url:focus {
   border-bottom: solid 2px #000;
   outline: none;
+}
+
+.result {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+}
+
+.trace-wrapper {
+  padding-top: 20px;
+  text-align: left;
+  margin: auto;
+}
+
+.trace-item > span {
+  font-family: monospace;
+  padding: 5px 0px;
+  font-size: 1.0rem;
+}
+
+.state-view {
+  position: fixed;
+  width: 100%;
+  color: #0009;
+  border: none;
+  font-size: 1.0rem;
+  bottom: 0;
 }
