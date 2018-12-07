@@ -55,7 +55,8 @@
 .trace-wrapper {
   padding-top: 20px;
   text-align: left;
-  margin: auto;
+  margin: 0px auto;
+  margin-top: 20px;
 }
 
 .trace-item > span {
