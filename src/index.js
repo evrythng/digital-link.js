@@ -78,7 +78,7 @@ const encode = (dl) => {
  * @param {(object|string)} opts - Optional construction object or string.
  */
 const DigitalLink = (opts) => {
-  // Model should only be manipulated through getters and setters
+  // Model should only be manipulated through getters and setters to ensure types are correct
   const model = Symbol('model');
   const result = {
     [model]: {
@@ -143,6 +143,7 @@ const DigitalLink = (opts) => {
   result.getKeyQualifiers = () => result[model].keyQualifiers;
   result.getAttribute = key => result[model].attributes[key];
   result.getAttributes = () => result[model].attributes;
+  
   result.toUrlString = () => encode(result[model]);
   result.toJsonString = () => JSON.stringify(result[model]);
   result.isValid = () => validate(result.toUrlString());
