@@ -13,7 +13,7 @@ const decode = (dl, str) => {
     throw new Error('String input must contain http(s) protocol');
   }
 
-  if (str.split('/').length < 5) {
+  if (str.split('/').length < 5 || str.split('/')[4].length === 0) {
     throw new Error('Must contain at least an identifier');
   }
 
