@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { DigitalLink } = require('../');
+const { DigitalLink, testRule, Rules } = require('../');
 
 const DATA = {
   domain: 'https://gs1.evrythng.com',
@@ -61,14 +61,23 @@ const createUsingChain = () => DigitalLink()
   .setAttribute(DATA.bestBeforeAttribute.key, DATA.bestBeforeAttribute.value)
   .setAttribute(DATA.customAttribute.key, DATA.customAttribute.value);
 
-describe('DigitalLink', () => {
-  describe('Exports', () => {
-    it('should export a creation function', () => {
-      expect(DigitalLink).to.be.a('function');
-      expect(() => DigitalLink()).to.not.throw();
-    });
+describe('Exports', () => {
+  it('should export a creation function', () => {
+    expect(DigitalLink).to.be.a('function');
+    expect(() => DigitalLink()).to.not.throw();
   });
 
+  it('should export a testRule function', () => {
+    expect(testRule).to.be.a('function');
+  });
+
+  it('should export a Rules object', () => {
+    expect(Rules).to.be.an('object');
+    expect(Object.keys(Rules).length).to.equal(27);
+  });
+});
+
+describe('DigitalLink', () => {
   describe('Creation', () => {
     it('should create using setters', () => {
       expect(createUsingSetters).to.not.throw();
@@ -277,5 +286,18 @@ describe('DigitalLink', () => {
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913d');
       expect(dl.getValidationTrace()).to.deep.equal(expected);
     });
+  });
+});
+
+describe('testRule', () => {
+  it('should validate some rules', () => {
+    expect(testRule(Rules.gtin, '9780345418913')).to.equal(true);
+    expect(testRule(Rules.ser, '58943')).to.equal(true);
+    expect(testRule(Rules.cpv, '489327')).to.equal(true);
+  });
+
+  it('should not validate when rules are not met', () => {
+    expect(testRule(Rules.gtin, '9780345418913d')).to.equal(false);
+    expect(testRule(Rules.ser, '{}')).to.equal(false);
   });
 });

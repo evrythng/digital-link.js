@@ -23,17 +23,25 @@ const addQueryParams = (result, attributes) => Object.keys(attributes).reduce((r
 const getStartRule = str => str.includes('id.gs1.org') ? 'canonicalGS1webURI' : 'customGS1webURI';
 
 /**
- * Run the apglib parser over the Digital Link string.
+ * Run the apglib parser over a given string according to a given grammar rule.
+ *
+ * @param {string} rule - The rule name from the grammar.
+ * @param {string} inputStr - The DigitalLink as a string.
+ * @returns {boolean} true if the parser returns 'success', false otherwise.
+ */
+const validateRule = (rule, inputStr) => {
+  const parser = new apglib.parser();
+  const result = parser.parse(GRAMMAR, rule, apglib.utils.stringToChars(inputStr), []);
+  return result.success;
+};
+
+/**
+ * Run the apglib parser over the Digital Link URL string.
  *
  * @param {string} inputStr - The DigitalLink as a string.
  * @returns {boolean} true if the parser returns 'success', false otherwise.
  */
-const validate = (inputStr) => {
-  const startRule = getStartRule(inputStr);
-  const parser = new apglib.parser();
-  const result = parser.parse(GRAMMAR, startRule, apglib.utils.stringToChars(inputStr), []);
-  return result.success;
-};
+const validateUrl = inputStr => validateRule(getStartRule(inputStr), inputStr);
 
 /**
  * Throw an error if key and value are not strings.
@@ -120,6 +128,7 @@ module.exports = {
   assertPropertyType,
   assertStringPair,
   assignStringPair,
-  validate,
+  validateUrl,
+  validateRule,
   getTrace,
 };

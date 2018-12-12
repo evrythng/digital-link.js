@@ -1,6 +1,40 @@
 const {
-  addQueryParams, assertPropertyType, assertStringPair, assignStringPair, validate, getTrace,
+  addQueryParams, assertPropertyType, assertStringPair, assignStringPair, validateUrl, validateRule,
+  getTrace,
 } = require('./util');
+
+/**
+ * Individual parser rules that can be run with `testRule()`.
+ */
+const Rules = {
+  gtin: 'gtin-value',
+  itip: 'itip-value',
+  gmn: 'gmn-value',
+  cpid: 'cpid-value',
+  shipTo: 'shipTo-value',
+  billTo: 'billTo-value',
+  purchasedFrom: 'purchasedFrom-value',
+  shipFor: 'shipFor-value',
+  gln: 'gln-value',
+  payTo: 'payTo-value',
+  glnProd: 'glnProd-value',
+  gsrnp: 'gsrnp-value',
+  gsrn: 'gsrn-value',
+  gcn: 'gcn-value',
+  sscc: 'sscc-value',
+  gdti: 'gdti-value',
+  ginc: 'ginc-value',
+  gsin: 'gsin-value',
+  grai: 'grai-value',
+  giai: 'giai-value',
+  cpv: 'cpv-value',
+  lot: 'lot-value',
+  ser: 'ser-value',
+  cpsn: 'cpsn-value',
+  glnx: 'glnx-value',
+  refno: 'refno-value',
+  srin: 'srin-value',
+};
 
 /**
  * Attempt to populate internal data fields from a Digital Link in URL format.
@@ -146,12 +180,30 @@ const DigitalLink = (opts) => {
   
   result.toUrlString = () => encode(result[model]);
   result.toJsonString = () => JSON.stringify(result[model]);
-  result.isValid = () => validate(result.toUrlString());
+  result.isValid = () => validateUrl(result.toUrlString());
   result.getValidationTrace = () => getTrace(result.toUrlString());
 
   return result;
 };
 
+/**
+ * Test a single parser rule for a given value, such as a GTIN.
+ * Available rules are found in `Rules` object of this library.
+ *
+ * @param {string} rule - A rule from the `Rules` object.
+ * @param {string} value - The value to validate.
+ * @returns {boolean} true if the value passes against the rule.
+ */
+const testRule = (rule, value) => {
+  if (!Object.keys(Rules).some(p => Rules[p] === rule)) {
+    throw new Error(`Invalid rule: ${rule}`);
+  }
+
+  return validateRule(rule, value);
+};
+
 module.exports = {
   DigitalLink,
-}
+  testRule,
+  Rules,
+};
