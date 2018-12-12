@@ -161,6 +161,19 @@ const generateTraceHtml = (inputStr) => {
   return parser.trace.toHtmlPage('ascii', 'Parsing details:');
 };
 
+/**
+ * Generate the complete HTML fragment provided by apglib for parsing results.
+ *
+ * @param {string} inputStr - The input URL to generate parser results for.
+ * @returns {string} HTML string representing the results of the validation.
+ */
+const generateResultsHtml = (inputStr) => {
+  const parser = createParser();
+  const startRule = getStartRule(inputStr);
+  const result = parser.parse(GRAMMAR, startRule, apglib.utils.stringToChars(inputStr), []);
+  return apglib.utils.parserResultToHtml(result);
+};
+
 module.exports = {
   addQueryParams,
   assertPropertyType,
@@ -171,4 +184,5 @@ module.exports = {
   getTrace,
   generateStatsHtml,
   generateTraceHtml,
+  generateResultsHtml,
 };

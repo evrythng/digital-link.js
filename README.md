@@ -2,6 +2,11 @@
 
 SDK for creating, verifying, and representing/transferring GS1 Digital Links.
 
+* [Installation](#installation)
+* [Usage](#usage)
+* [Test App](#test-app)
+* [Unit Tests](#unit-tests)
+
 
 ## Installation
 
@@ -121,13 +126,42 @@ console.log(`Is the Digital Link valid? ${isValid}`);
 ```
 
 
-### Unit Tests
+## Utilities
 
-Unit tests can be run with the `npm test` command, and cover all methods, 
-creation methods, and output formats.
+Since this library is based on 
+[`apglib`](https://github.com/ldthomas/apg-js2-lib), it can do more than simply
+validate GS1 Digial Link URLs. The `Utils` object allows a single Application
+Identifier to be validated (as well as a whole canonical URL). All available
+individual rules are available from the `Rules` object
+
+For example, validating a GTIN by itself:
+
+```js
+const { Utils } = require('digital-link.js');
+
+// Validate a GTIN
+const candidate = '438948397';
+const rule = Utils.Rules.gtin;
+
+const isValid = Util.testRule(rule, candidate);
+console.log(`Is the GTIN ${candidate} valid? ${isValid}`);
+```
+
+It also allows generation of simple HTML tables that detail the results of the
+parser run against the input:
+
+```js
+const { DigitalLink, Utils } = require('digital-link.js');
+
+const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+
+// See all the parser trace steps for a given DigitalLink URL
+const traceView = document.getElementById('my_trace_container');
+traceView.innerHTML = Utils.generateTraceHtml(dl.toUrlString());
+```
 
 
-### Testing App
+## Test App
 
 ![](test-app/assets/screenshot.png)
 
@@ -145,3 +179,10 @@ To use it:
 The trace steps (which matched a parser rule) are also shown, allowing you to 
 see which parts of your input did not match any rule. The output of 
 `toJsonString()` is also shown as an insight into the make-up of the URL itself.
+
+
+## Unit Tests
+
+Unit tests can be run with the `npm test` command, and cover all methods, 
+creation methods, and output formats.
+

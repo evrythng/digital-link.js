@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { DigitalLink, Utils, Rules } = require('../');
+const { DigitalLink, Utils } = require('../');
 
 const DATA = {
   domain: 'https://gs1.evrythng.com',
@@ -67,23 +67,21 @@ describe('Exports', () => {
     expect(() => DigitalLink()).to.not.throw();
   });
 
-  describe('Utils', () => {
-    it('should export a testRule function', () => {
-      expect(Utils.testRule).to.be.a('function');
-    });
-
-    it('should export a generateStatsHtml function', () => {
-      expect(Utils.generateStatsHtml).to.be.a('function');
-    });
-
-    it('should export a generateTraceHtml function', () => {
-      expect(Utils.generateTraceHtml).to.be.a('function');
-    });
+  it('should export Utils.testRule', () => {
+    expect(Utils.testRule).to.be.a('function');
   });
 
-  it('should export a Rules object', () => {
-    expect(Rules).to.be.an('object');
-    expect(Object.keys(Rules).length).to.equal(27);
+  it('should export Utils.generateStatsHtml', () => {
+    expect(Utils.generateStatsHtml).to.be.a('function');
+  });
+
+  it('should export Utils.generateTraceHtml', () => {
+    expect(Utils.generateTraceHtml).to.be.a('function');
+  });
+
+  it('should export Utils.Rules', () => {
+    expect(Utils.Rules).to.be.an('object');
+    expect(Object.keys(Utils.Rules).length).to.equal(29);
   });
 });
 
@@ -299,33 +297,36 @@ describe('DigitalLink', () => {
   });
 });
 
-describe('testRule', () => {
+describe('Utils', () => {
   it('should validate some rules', () => {
-    expect(Utils.testRule(Rules.gtin, '9780345418913')).to.equal(true);
-    expect(Utils.testRule(Rules.ser, '58943')).to.equal(true);
-    expect(Utils.testRule(Rules.cpv, '489327')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.gtin, '9780345418913')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.ser, '58943')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.cpv, '489327')).to.equal(true);
   });
 
   it('should not validate when rules are not met', () => {
-    expect(Utils.testRule(Rules.gtin, '9780345418913d')).to.equal(false);
-    expect(Utils.testRule(Rules.ser, '{}')).to.equal(false);
+    expect(Utils.testRule(Utils.Rules.gtin, '9780345418913d')).to.equal(false);
+    expect(Utils.testRule(Utils.Rules.ser, '{}')).to.equal(false);
   });
-});
 
-describe('generateStatsHtml', () => {
   it('should generate some stats HTML', () => {
     const input = 'https://data.gs1.org/01/47474747474747d';
     const sample = '<table class="apg-stats">';
 
     expect(Utils.generateStatsHtml(input)).to.include(sample);
   });
-});
 
-describe('generateTraceHtml', () => {
   it('should generate some trace HTML', () => {
     const input = 'https://data.gs1.org/01/47474747474747d';
     const sample = '<table class="apg-trace">';
 
     expect(Utils.generateTraceHtml(input)).to.include(sample);
+  });
+
+  it('should generate some results HTML', () => {
+    const input = 'https://data.gs1.org/01/47474747474747d';
+    const sample = '<table class="apg-state">';
+
+    expect(Utils.generateResultsHtml(input)).to.include(sample);
   });
 });

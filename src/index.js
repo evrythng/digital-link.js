@@ -1,6 +1,6 @@
 const {
   addQueryParams, assertPropertyType, assertStringPair, assignStringPair, validateUrl, validateRule,
-  getTrace, generateStatsHtml, generateTraceHtml,
+  getTrace, generateStatsHtml, generateTraceHtml, generateResultsHtml,
 } = require('./util');
 
 /**
@@ -34,6 +34,8 @@ const Rules = {
   glnx: 'glnx-value',
   refno: 'refno-value',
   srin: 'srin-value',
+  customGS1webURI: 'customGS1webURI',
+  canonicalGS1webURI: 'canonicalGS1webURI',
 };
 
 /**
@@ -204,10 +206,11 @@ const testRule = (rule, value) => {
 
 module.exports = {
   DigitalLink,
-  Rules,
   Utils: {
+    Rules,
     testRule,
     generateStatsHtml,
     generateTraceHtml,
+    generateResultsHtml,
   },
 };
