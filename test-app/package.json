@@ -1,5 +1,5 @@
 {
-  "name": "gs1-dl-sdk-test-app",
+  "name": "digital-link-test-app",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
   "author": "EVRYTHNG",
   "license": "",
   "dependencies": {
-    "evrythng-gs1-dl-sdk": "file:..",
+    "digital-link.js": "file:..",
     "hyperapp": "^1.2.9",
     "parcel": "^1.10.3"
   }

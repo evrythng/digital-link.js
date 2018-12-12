@@ -1,6 +1,6 @@
 import { app, h } from 'hyperapp';
 
-const { DigitalLink } = require('evrythng-gs1-dl-sdk');
+const { DigitalLink } = require('digital-link.js');
 
 const state = {
   url: '',
@@ -58,8 +58,8 @@ const view = (state, actions) => (
         actions.doValidation();
       }}/>
     <Paragraph>
-      Powered by the <a href="https://github.com/evrythng/evrythng-gs1-dl-sdk" target="_blank">
-        evrythng-gs1-dl-sdk</a> SDK.
+      Powered by the <a href="https://github.com/evrythng/digital-link.js" target="_blank">
+        digital-link.js</a> SDK.
     </Paragraph>
 
     <TraceView trace={state.trace}/>

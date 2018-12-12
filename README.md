@@ -1,11 +1,11 @@
-# evrythng-gs1-dl-sdk
+# digital-link.js
 
 SDK for creating, verifying, and representing/transferring GS1 Digital Links.
 
 
 ## Installation
 
-1. `npm i --save evrythng-gs1-dl-sdk`
+1. `npm i --save digital-link.js`
 2. `require` it as shown below.
 
 
@@ -31,7 +31,7 @@ The object can contain the following items:
 An example is shown below:
 
 ```js
-const { DigitalLink } = require('evrythng-gs1-dl-sdk');
+const { DigitalLink } = require('digital-link.js');
 
 const dl = DigitalLink({
   domain: 'https://dlnkd.tn.gg',
@@ -54,7 +54,7 @@ The equivalent to the object-based example above can also be created
 piecemeal using setters:
 
 ```js
-const { DigitalLink } = require('evrythng-gs1-dl-sdk');
+const { DigitalLink } = require('digital-link.js');
 
 const dl = DigitalLink();
 dl.setDomain('https://dlnkd.tn.gg');
@@ -66,7 +66,7 @@ dl.setAttribute('thngId', 'UMwxDXBdUbxgtyRaR2HBrc4r');
 Setters can also be chained:
 
 ```js
-const { DigitalLink } = require('evrythng-gs1-dl-sdk');
+const { DigitalLink } = require('digital-link.js');
 
 const dl = DigitalLink()
   .setDomain('https://dlnkd.tn.gg')

@@ -1,18 +1,22 @@
 {
-  "name": "evrythng-gs1-dl-sdk",
+  "name": "digital-link.js",
   "version": "1.0.0",
-  "description": "An SDK for the GS1 Digital Link data format.",
+  "description": "An SDK for creating and validating GS1 Digital Link URLs and objects.",
   "main": "src/index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha tests/index.js"
   },
   "author": "EVRYTHNG",
-  "license": "",
+  "license": "Apache-2.0",
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.2.0"
   },
   "dependencies": {
     "apg-lib": "^3.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evrythng/digital-link.js"
   }
 }
