@@ -23,6 +23,18 @@ const addQueryParams = (result, attributes) => Object.keys(attributes).reduce((r
 const getStartRule = str => str.includes('id.gs1.org') ? 'canonicalGS1webURI' : 'customGS1webURI';
 
 /**
+ * Create an initialise a parser object, used for multiple applications.
+ *
+ * @returns {object} Parser object.
+ */
+const createParser = () => {
+  const parser = new apglib.parser();
+  parser.stats = new apglib.stats();
+  parser.trace = new apglib.trace();
+  return parser;
+};
+
+/**
  * Run the apglib parser over a given string according to a given grammar rule.
  *
  * @param {string} rule - The rule name from the grammar.
@@ -30,8 +42,7 @@ const getStartRule = str => str.includes('id.gs1.org') ? 'canonicalGS1webURI' : 
  * @returns {boolean} true if the parser returns 'success', false otherwise.
  */
 const validateRule = (rule, inputStr) => {
-  const parser = new apglib.parser();
-  const result = parser.parse(GRAMMAR, rule, apglib.utils.stringToChars(inputStr), []);
+  const result = createParser().parse(GRAMMAR, rule, apglib.utils.stringToChars(inputStr), []);
   return result.success;
 };
 
@@ -102,8 +113,7 @@ const between = (str, start, end) => {
  * @returns {object[]} Array of objects describing the validation trace.
  */
 const getTrace = (inputStr) => {
-  const parser = new apglib.parser();
-  parser.trace = new apglib.trace();
+  const parser = createParser();
 
   const result = parser.parse(GRAMMAR, getStartRule(inputStr), apglib.utils.stringToChars(inputStr), []);
   const traceHtml = parser.trace.toHtmlPage('ascii', 'Parsing details:')
@@ -123,6 +133,34 @@ const getTrace = (inputStr) => {
   return { trace, success: result.success };
 };
 
+/**
+ * Generate the stats HTML fragment provided by apglib.
+ *
+ * @param {string} inputStr - The input URL to generate parser stats for.
+ * @returns {string} HTML string representing the stats of the validation.
+ */
+const generateStatsHtml = (inputStr) => {
+  const parser = createParser();
+  parser.parse(GRAMMAR, getStartRule(inputStr), apglib.utils.stringToChars(inputStr), []);
+
+  return parser.stats.toHtml('ops', 'ops-only stats')
+   + parser.stats.toHtml('index', 'rules ordered by index')
+   + parser.stats.toHtml('alpha', 'rules ordered alphabetically')
+   + parser.stats.toHtml('hits', 'rules ordered by hit count');
+};
+
+/**
+ * Generate the trace HTML fragment provided by apglib.
+ *
+ * @param {string} inputStr - The input URL to generate parser trace for.
+ * @returns {string} HTML string representing the trace steps of the validation.
+ */
+const generateTraceHtml = (inputStr) => {
+  const parser = createParser();
+  parser.parse(GRAMMAR, getStartRule(inputStr), apglib.utils.stringToChars(inputStr), []);
+  return parser.trace.toHtmlPage('ascii', 'Parsing details:');
+};
+
 module.exports = {
   addQueryParams,
   assertPropertyType,
@@ -131,4 +169,6 @@ module.exports = {
   validateUrl,
   validateRule,
   getTrace,
+  generateStatsHtml,
+  generateTraceHtml,
 };

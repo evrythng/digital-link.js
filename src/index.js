@@ -1,6 +1,6 @@
 const {
   addQueryParams, assertPropertyType, assertStringPair, assignStringPair, validateUrl, validateRule,
-  getTrace,
+  getTrace, generateStatsHtml, generateTraceHtml,
 } = require('./util');
 
 /**
@@ -204,6 +204,10 @@ const testRule = (rule, value) => {
 
 module.exports = {
   DigitalLink,
-  testRule,
   Rules,
+  Utils: {
+    testRule,
+    generateStatsHtml,
+    generateTraceHtml,
+  },
 };
