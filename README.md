@@ -2,6 +2,10 @@
 
 SDK for creating, verifying, and representing/transferring GS1 Digital Links.
 
+This is the library powering the 
+[EVRYTHNG GS1 Digital Link Tools](https://digital-link.evrythng.com) project,
+which allows easy generation and validation of GS1 Digital Links via a UI.
+
 * [Installation](#installation)
 * [Usage](#usage)
 * [Test App](#test-app)
