@@ -130,6 +130,39 @@ const isValid = dl.isValid();
 console.log(`Is the Digital Link valid? ${isValid}`);
 ```
 
+You can also view the validation trace output at each match stage. Any remainder
+after the last stage can be deemed erroneous, as it did not match any rule in
+the grammar:
+
+```js
+const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913x');
+const trace = dl.getValidationTrace();
+
+console.log(traces);
+```
+
+The example above contains an erroneous 'x' at the end, so it does not validate: 
+
+```json
+{
+  "trace": [
+    { "rule": "scheme", "match": "https", "remainder": "://gs1.evrythng.com/01/9780345418913x" },
+    { "rule": "reg-name", "match": "gs1.evrythng.com", "remainder": "/01/9780345418913x" },
+    { "rule": "host", "match": "gs1.evrythng.com", "remainder": "/01/9780345418913x" },
+    { "rule": "hostname", "match": "gs1.evrythng.com", "remainder": "/01/9780345418913x" },
+    { "rule": "customURIstem", "match": "https://gs1.evrythng.com", "remainder": "/01/9780345418913x" },
+    { "rule": "gtin-code", "match": "01", "remainder": "/9780345418913x" },
+    { "rule": "gtin-value", "match": "9780345418913", "remainder": "x" },
+    { "rule": "gtin-comp", "match": "/01/9780345418913", "remainder": "x" },
+    { "rule": "gtin-path", "match": "/01/9780345418913", "remainder": "x" },
+    { "rule": "gs1path", "match": "/01/9780345418913", "remainder": "x" },
+    { "rule": "gs1uriPattern", "match": "/01/9780345418913", "remainder": "x" },
+    { "rule": "customGS1webURI", "match": "https://gs1.evrythng.com/01/9780345418913", "remainder": "x" }
+  ],
+  "success": false
+}
+```
+
 
 ## Test App
 
@@ -180,8 +213,13 @@ const { DigitalLink, Utils } = require('digital-link.js');
 const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
 
 // See all the parser trace steps for a given DigitalLink URL
-const traceView = document.getElementById('my_trace_container');
-traceView.innerHTML = Utils.generateTraceHtml(dl.toUrlString());
+traceSpan.innerHTML = Utils.generateTraceHtml(dl.toUrlString());
+
+// See all the parser stats for a given DigitalLink URL
+statsSpan.innerHTML = Utils.generateStatsHtml(dl.toUrlString());
+
+// See all the parser results for a given DigitalLink URL
+resultsSpan.innerHTML = Utils.generateResultsHtml(dl.toUrlString());
 ```
 
 
@@ -189,4 +227,3 @@ traceView.innerHTML = Utils.generateTraceHtml(dl.toUrlString());
 
 Unit tests can be run with the `npm test` command, and cover all methods, 
 creation methods, and output formats.
-
