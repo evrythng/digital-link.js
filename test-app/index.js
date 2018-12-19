@@ -18,7 +18,7 @@ const actions = {
     actions.setUrl(el.target.value);
 
     try {
-      const dl = DigitalLink(state.url);
+      const dl = DigitalLink(el.target.value);
       actions.setIsValid(dl.isValid());
       actions.setJsonString(dl.toJsonString());
       actions.setTrace(dl.getValidationTrace().trace);

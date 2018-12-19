@@ -101,8 +101,8 @@ const assignStringPair = (dl, prop, key, value) => {
  * @returns {string} String contained between start and end.
  */
 const between = (str, start, end) => {
-  let matches = str.match(`(?<=${start})(.*?)(?=${end})`);
-  return matches ? matches[0] : '';
+  const matches = str.match(new RegExp(`${start}(.*?)(?=${end})`));
+  return matches ? matches[1] : '';
 };
 
 /**
@@ -123,7 +123,7 @@ const getTrace = (inputStr) => {
     .filter(item => item.includes('&uarr;M'));
   const trace = rows.filter(row => row.includes('apg-match'))
     .map((row) => {
-      const rule = row.match(/((?<=\()(.*?)(?=\)))/)[0];
+      const rule = row.match(/\((.*?)(?=\))/)[1];
       const sample = row.substring(row.indexOf(')'));
       const match = between(sample, 'match">', '<');
       const remainder = between(sample, 'remainder">', '<');
