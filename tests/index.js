@@ -150,11 +150,11 @@ describe('DigitalLink', () => {
     });
 
     it('should produce the same regardless of construction method', () => {
-      const expected = createUsingSetters().toUrlString();
-      expect(createUsingObject().toUrlString()).to.equal(expected);
-      expect(createUsingString().toUrlString()).to.equal(expected);
-      expect(createUsingSetters().toUrlString()).to.equal(expected);
-      expect(createUsingChain().toUrlString()).to.equal(expected);
+      const expected = createUsingSetters().toWebUriString();
+      expect(createUsingObject().toWebUriString()).to.equal(expected);
+      expect(createUsingString().toWebUriString()).to.equal(expected);
+      expect(createUsingSetters().toWebUriString()).to.equal(expected);
+      expect(createUsingChain().toWebUriString()).to.equal(expected);
     });
 
     it('should not allow access to underlying data', () => {
@@ -236,7 +236,7 @@ describe('DigitalLink', () => {
 
   describe('Generation', () => {
     it('should generate the correct URL string', () => {
-      expect(createUsingSetters().toUrlString()).to.equal(DATA.url);
+      expect(createUsingSetters().toWebUriString()).to.equal(DATA.url);
     });
 
     it('should generate the correct JSON string', () => {
