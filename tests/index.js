@@ -107,7 +107,7 @@ describe('DigitalLink', () => {
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ 
+      expect(dl.getIdentifier()).to.deep.equal({
         [DATA.identifier.key]: DATA.identifier.value,
       });
     });
@@ -192,14 +192,14 @@ describe('DigitalLink', () => {
     it('should return the identifier', () => {
       const identifier = createUsingSetters().getIdentifier();
       const [idKey] = Object.keys(identifier);
-      
+
       expect(idKey).to.equal(DATA.identifier.key);
       expect(identifier[idKey]).to.equal(DATA.identifier.value);
     });
 
     it('should return one key qualifier', () => {
       const value = createUsingSetters().getKeyQualifier(DATA.batchQualifier.key);
-      
+
       expect(value).to.equal(DATA.batchQualifier.value);
     });
 
@@ -209,7 +209,7 @@ describe('DigitalLink', () => {
         [DATA.serialQualifier.key]: DATA.serialQualifier.value,
         [DATA.batchQualifier.key]: DATA.batchQualifier.value,
       };
-      
+
       expect(value).to.deep.equal(expected);
     });
 
@@ -218,7 +218,7 @@ describe('DigitalLink', () => {
 
       let value = setterDl.getAttribute(DATA.bestBeforeAttribute.key);
       expect(value).to.equal(DATA.bestBeforeAttribute.value);
-      
+
       value = setterDl.getAttribute(DATA.customAttribute.key);
       expect(value).to.equal(DATA.customAttribute.value);
     });
@@ -229,7 +229,7 @@ describe('DigitalLink', () => {
         [DATA.bestBeforeAttribute.key]: DATA.bestBeforeAttribute.value,
         [DATA.customAttribute.key]: DATA.customAttribute.value,
       };
-      
+
       expect(value).to.deep.equal(expected);
     });
   });
@@ -250,8 +250,8 @@ describe('DigitalLink', () => {
     });
 
     it('should parse a valid URL trace history', () => {
-      const expected = { 
-        trace: [ 
+      const expected = {
+        trace: [
           { rule: 'scheme', match: 'https', remainder: '://gs1.evrythng.com/01/9780345418913' },
           { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
           { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
@@ -273,8 +273,8 @@ describe('DigitalLink', () => {
     });
 
     it('should parse an invalid URL trace history', () => {
-      const expected = { 
-        trace: [ 
+      const expected = {
+        trace: [
           { rule: 'scheme', match: 'https', remainder: '://gs1.evrythng.com/01/9780345418913d' },
           { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
           { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },

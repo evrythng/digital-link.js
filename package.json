@@ -13,7 +13,8 @@
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "apg-lib": "^3.2.0"
+    "apg-lib": "^3.2.0",
+    "stable": "^0.1.8"
   },
   "repository": {
     "type": "git",

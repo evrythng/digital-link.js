@@ -75,7 +75,7 @@ const decode = (dl, str) => {
       .forEach((pair) => {
         const [key, value] = pair.split('=');
         dl.attributes[key] = value;
-      }); 
+      });
   }
 };
 
@@ -167,23 +167,23 @@ const DigitalLink = (opts) => {
     assignStringPair(result[model], 'keyQualifiers', key, value);
     return result;
   };
-  
+
   result.setAttribute = (key, value) => {
     assignStringPair(result[model], 'attributes', key, value);
     return result;
   };
-  
+
   result.getDomain = () => result[model].domain;
   result.getIdentifier = () => result[model].identifier;
   result.getKeyQualifier = key => result[model].keyQualifiers[key];
   result.getKeyQualifiers = () => result[model].keyQualifiers;
   result.getAttribute = key => result[model].attributes[key];
   result.getAttributes = () => result[model].attributes;
-  
-  result.toUrlString = () => encode(result[model]);
+
+  result.toWebUriString = () => encode(result[model]);
   result.toJsonString = () => JSON.stringify(result[model]);
-  result.isValid = () => validateUrl(result.toUrlString());
-  result.getValidationTrace = () => getTrace(result.toUrlString());
+  result.isValid = () => validateUrl(result.toWebUriString());
+  result.getValidationTrace = () => getTrace(result.toWebUriString());
 
   return result;
 };

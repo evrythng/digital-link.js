@@ -1,8 +1,8 @@
 # digital-link.js
 
-SDK for creating, verifying, and representing/transferring GS1 Digital Links.
+Javascript library for creating, verifying, and representing/transferring GS1 Digital Links.
 
-This is the library powering the 
+This is the library powering the
 [EVRYTHNG GS1 Digital Link Tools](https://digital-link.evrythng.com) project,
 which allows easy generation and validation of GS1 Digital Links via a UI.
 
@@ -21,8 +21,8 @@ which allows easy generation and validation of GS1 Digital Links via a UI.
 
 ## Usage
 
-The `DigitalLink` object can be created in three ways - with options, using 
-setters, or an existing URL string. Either method of creation will produce 
+The `DigitalLink` object can be created in three ways - with options, using
+setters, or an existing URL string. Either method of creation will produce
 the same result.
 
 
@@ -31,11 +31,11 @@ the same result.
 The object can contain the following items:
 
 - `domain` (string) - The domain to use.
-- `identifier` (object) - An object containing a single GS1 Application 
+- `identifier` (object) - An object containing a single GS1 Application
   Identifier, such as GTIN, as a key-value pair.
 - `keyQualifiers` (object) - An object containing one or more GS1 Key Qualifiers
   as key-value pairs.
-- `attributes` (object) - As for `keyQualifiers`, but containing GS1 Data 
+- `attributes` (object) - As for `keyQualifiers`, but containing GS1 Data
   Attributes and custom data attributes.
 
 An example is shown below:
@@ -60,7 +60,7 @@ const dl = DigitalLink({
 
 ### Create with setters
 
-The equivalent to the object-based example above can also be created 
+The equivalent to the object-based example above can also be created
 piecemeal using setters:
 
 ```js
@@ -86,23 +86,23 @@ const dl = DigitalLink()
 ```
 
 
-### Create from URL
+### Create from URI
 
 A `DigitalLink` object can also be created using an existing string:
 
 ```js
-const url = 'https://dlnkd.tn.gg/01/9780345418913/21/43786?thngId=UMwxDXBdUbxgtyRaR2HBrc4r';
+const uri = 'https://dlnkd.tn.gg/01/9780345418913/21/43786?thngId=UMwxDXBdUbxgtyRaR2HBrc4r';
 
-const dl = DigitalLink(url);
+const dl = DigitalLink(uri);
 ```
 
 
 ### URL and JSON Generation
 
-A `DigitalLink` object can transform itself into a string URL representation:
+A `DigitalLink` object can transform itself into a string Web URI representation:
 
 ```js
-const url = dl.toUrlString();
+const url = dl.toWebUriString();
 
 console.log(url);
 ```
@@ -138,10 +138,10 @@ the grammar:
 const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913x');
 const trace = dl.getValidationTrace();
 
-console.log(traces);
+console.log(trace);
 ```
 
-The example above contains an erroneous 'x' at the end, so it does not validate: 
+The example above contains an erroneous 'x' at the end, so it does not validate:
 
 ```json
 {
@@ -168,7 +168,7 @@ The example above contains an erroneous 'x' at the end, so it does not validate:
 
 ![](test-app/assets/screenshot.png)
 
-The `test-app` directory contains a simple app built with 
+The `test-app` directory contains a simple app built with
 [Hyperapp](https://github.com/jorgebucaran/hyperapp) that demonstrates how to
 easily build a simple GS1 Digital Link verification tool using this SDK.
 
@@ -177,18 +177,18 @@ To use it:
 1. `cd test-app && npm i`
 2. `npm run serve`
 3. Open `http://localhost:1234/index.html` in a browser of choice.
-4. Enter or type a GS1 Digital Link, and observe the validity. 
+4. Enter or type a GS1 Digital Link, and observe the validity.
 
-The trace steps (which matched a parser rule) are also shown, allowing you to 
-see which parts of your input did not match any rule. The output of 
+The trace steps (which matched a parser rule) are also shown, allowing you to
+see which parts of your input did not match any rule. The output of
 `toJsonString()` is also shown as an insight into the make-up of the URL itself.
 
 
 ## Utilities
 
-Since this library is based on 
+Since this library is based on
 [`apglib`](https://github.com/ldthomas/apg-js2-lib), it can do more than simply
-validate GS1 Digial Link URLs. The `Utils` object allows a single Application
+validate GS1 Digital Link URLs. The `Utils` object allows a single Application
 Identifier to be validated (as well as a whole canonical URL). All available
 individual rules are available from the `Rules` object
 
@@ -225,5 +225,5 @@ resultsSpan.innerHTML = Utils.generateResultsHtml(dl.toUrlString());
 
 ## Unit Tests
 
-Unit tests can be run with the `npm test` command, and cover all methods, 
+Unit tests can be run with the `npm test` command, and cover all methods,
 creation methods, and output formats.
