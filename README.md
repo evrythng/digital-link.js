@@ -1,6 +1,6 @@
 # digital-link.js
 
-Javascript library for creating, verifying, and representing/transferring GS1 Digital Links.
+Javascript library for creating, verifying, and representing/transferring [GS1 Digital Links](https://evrythng.com/news/upgrading-the-barcode-to-the-web-gs1-digital-link/).
 
 This is the library powering the
 [EVRYTHNG GS1 Digital Link Tools](https://digital-link.evrythng.com) project,
@@ -86,7 +86,7 @@ const dl = DigitalLink()
 ```
 
 
-### Create from URI
+### Create from Web URI
 
 A `DigitalLink` object can also be created using an existing string:
 
@@ -120,7 +120,7 @@ const dl2 = DigitalLink(JSON.parse(jsonString));
 ```
 
 
-### URL Validation
+### Digital Link Validation
 
 Once created, the `DigitalLink` object can validate itself:
 
