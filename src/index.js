@@ -182,6 +182,7 @@ const DigitalLink = (opts) => {
   result.getAttributes = () => result[model].attributes;
 
   result.toWebUriString = () => encode(result[model]);
+  result.toCompressedWebUriString = () => compressWebUri(result.toWebUriString());
   result.toJsonString = () => JSON.stringify(result[model]);
   result.isValid = () => validateUrl(result.toWebUriString());
   result.getValidationTrace = () => getTrace(result.toWebUriString());

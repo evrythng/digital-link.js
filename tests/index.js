@@ -25,6 +25,7 @@ const DATA = {
   },
   url: 'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh',
   jsonString: '{"domain":"https://gs1.evrythng.com","identifier":{"01":"9780345418913"},"keyQualifiers":{"10":"38737643","21":"58943"},"attributes":{"15":"230911","thngId":"U5mQKGDpnymBwQwRakyBqeYh"}}',
+  compressedWebUri: 'https://gs1.evrythng.com/HxHKVAdpQhCTxbrOF_yEFcx_4a2GeAh1mFOZkChg6Z8pgcEMEWpMganmIQ',
 };
 
 const createUsingSetters = () => {
@@ -242,6 +243,10 @@ describe('DigitalLink', () => {
     it('should generate the correct JSON string', () => {
       expect(createUsingSetters().toJsonString()).to.equal(DATA.jsonString);
     });
+
+    it('should generate the correct compressed web URI string', () => {
+      expect(createUsingSetters().toCompressedWebUriString()).to.equal(DATA.compressedWebUri);
+    });
   });
 
   describe('Validation', () => {
@@ -328,5 +333,19 @@ describe('Utils', () => {
     const sample = '<table class="apg-state">';
 
     expect(Utils.generateResultsHtml(input)).to.include(sample);
+  });
+
+  it('should compress a Digital Link URI', () => {
+    const input = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+    const expected = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
+
+    expect(Utils.compressWebUri(input)).to.equal(expected);
+  });
+
+  it('should decompress a compressed Digital Link URI', () => {
+    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
+    const expected = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+
+    expect(Utils.decompressWebUri(input)).to.equal(expected);
   });
 });
