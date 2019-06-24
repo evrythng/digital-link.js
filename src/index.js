@@ -2,6 +2,7 @@ const {
   addQueryParams, assertPropertyType, assertStringPair, assignStringPair, validateUrl, validateRule,
   getTrace, generateStatsHtml, generateTraceHtml, generateResultsHtml,
 } = require('./util');
+const { compressWebUri, decompressWebUri } = require('./compression');
 
 /**
  * Individual parser rules that can be run with `testRule()`.
@@ -212,5 +213,7 @@ module.exports = {
     generateStatsHtml,
     generateTraceHtml,
     generateResultsHtml,
+    compressWebUri,
+    decompressWebUri,
   },
 };
