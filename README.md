@@ -164,6 +164,50 @@ The example above contains an erroneous 'x' at the end, so it does not validate:
 ```
 
 
+### Compression
+
+Since version 1.1.0, compression/decompression of a Digital Link URI can be
+performed. To create a compressed URI, use the `toCompressedWebUriString()`
+method:
+
+```js
+const uri = 'https://dlnkd.tn.gg/01/9780345418913/21/43786?thngId=UMwxDXBdUbxgtyRaR2HBrc4r';
+const dl = DigitalLink(uri);
+
+const compressedUri = dl.toCompressedWebUriString();
+```
+
+To attempt decompression of a compressed URI, use the `decompress` option in the
+constructor function:
+
+```js
+const compressedUri = 'https://dlnkd.tn.gg/DBHKVAdpQgqrCvDWwzwEOswoZhiGuC6o3jBbki0jsODW5xW';
+
+const opts = { decompress: true };
+const dl = DigitalLink(compressedUri, opts);
+```
+
+> Note: decompression will fail if the result is not a valid GS1 Digital Link.
+
+The `Utils` object also provides methods for direct compression and
+decompression of URI strings:
+
+```js
+const { Utils } = require('digital-link.js');
+
+const uri = 'https://dlnkd.tn.gg/01/9780345418913/21/43786';
+
+// Compress a URI
+const compressedUri = Utils.compressWebUri(uri);
+
+// Decompress a compressed URI
+const decompressedUri = Utils.decompressWebUri(compressedUri);
+
+// Detect if a URI is compressed
+const isCompressed = Utils.isCompressedWebUri(compressedUri);
+```
+
+
 ## Test App
 
 ![](test-app/assets/screenshot.png)
