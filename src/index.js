@@ -2,7 +2,7 @@ const {
   addQueryParams, assertPropertyType, assertStringPair, assignStringPair, validateUrl, validateRule,
   getTrace, generateStatsHtml, generateTraceHtml, generateResultsHtml,
 } = require('./util');
-const { compressWebUri, decompressWebUri } = require('./compression');
+const { compressWebUri, decompressWebUri, isCompressedWebUri } = require('./compression');
 
 /**
  * Individual parser rules that can be run with `testRule()`.
@@ -146,7 +146,7 @@ const DigitalLink = (opts) => {
   }
 
   if (typeof opts === 'string') {
-    decode(result[model], opts);
+    decode(result[model], isCompressedWebUri(opts) ? decompressWebUri(opts) : opts);
   }
 
   result.setDomain = (domain) => {
@@ -216,5 +216,6 @@ module.exports = {
     generateResultsHtml,
     compressWebUri,
     decompressWebUri,
+    isCompressedWebUri,
   },
 };

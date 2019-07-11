@@ -150,6 +150,13 @@ describe('DigitalLink', () => {
       expect(dl.getAttribute('thngId')).to.equal('U5mQKGDpnymBwQwRakyBqeYh');
     });
 
+    it('should create from string - compressed URI', () => {
+      const dl = DigitalLink(DATA.compressedWebUri);
+      const expected = 'https://gs1.evrythng.com/01/09780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh'
+
+      expect(dl.toWebUriString()).to.equal(expected);
+    });
+
     it('should produce the same regardless of construction method', () => {
       const expected = createUsingSetters().toWebUriString();
       expect(createUsingObject().toWebUriString()).to.equal(expected);
@@ -344,8 +351,27 @@ describe('Utils', () => {
 
   it('should decompress a compressed Digital Link URI', () => {
     const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
-    const expected = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+    const expected = 'https://dlnkd.tn.gg/01/09780345418913/10/231/21/345345?15=120820';
 
     expect(Utils.decompressWebUri(input)).to.equal(expected);
+  });
+
+  it('should decompress a compressed Digital Link URI using short AI names', () => {
+    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
+    const expected = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+
+    expect(Utils.decompressWebUri(input, true)).to.equal(expected);
+  });
+
+  it('should detect a compressed Digital Link URI', () => {
+    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
+
+    expect(Utils.isCompressedWebUri(input)).to.equal(true);
+  });
+
+  it('should detect an uncompressed Digital Link URI', () => {
+    const input = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+
+    expect(Utils.isCompressedWebUri(input)).to.equal(false);
   });
 });
