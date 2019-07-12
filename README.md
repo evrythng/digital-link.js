@@ -177,14 +177,13 @@ const dl = DigitalLink(uri);
 const compressedUri = dl.toCompressedWebUriString();
 ```
 
-To attempt decompression of a compressed URI, use the `decompress` option in the
-constructor function:
+To attempt decompression of a compressed URI use the constructor function as
+usual:
 
 ```js
 const compressedUri = 'https://dlnkd.tn.gg/DBHKVAdpQgqrCvDWwzwEOswoZhiGuC6o3jBbki0jsODW5xW';
 
-const opts = { decompress: true };
-const dl = DigitalLink(compressedUri, opts);
+const dl = DigitalLink(compressedUri);
 ```
 
 > Note: decompression will fail if the result is not a valid GS1 Digital Link.

@@ -167,8 +167,7 @@ describe('DigitalLink', () => {
     });
 
     it('should create from string - compressed URI', () => {
-      const opts = { decompress: true };
-      const dl = DigitalLink(DATA.compressedWebUri, opts);
+      const dl = DigitalLink(DATA.compressedWebUri);
       const expected = 'https://gs1.evrythng.com/01/09780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh'
 
       expect(dl.toWebUriString()).to.equal(expected);

@@ -112,13 +112,10 @@ const encode = (dl) => {
  * Construct a DigitalLink either from object params, a string, or built using
  * the available setters.
  *
- * Options include:
- *   decompress - Set to true to attempt decompression of the input string.
- *
  * @param {(object|string)} [input] - Optional input construction object or string.
- * @param {object} [opts] - Optional options (see above).
+ * @returns {object} The DigitalLink instance with populated data.
  */
-const DigitalLink = (input, opts = {}) => {
+const DigitalLink = (input) => {
   // Model should only be manipulated through getters and setters to ensure types are correct
   const model = Symbol('model');
   const result = {
@@ -150,11 +147,7 @@ const DigitalLink = (input, opts = {}) => {
   }
 
   if (typeof input === 'string') {
-    if (opts.decompress && isCompressedWebUri(input)) {
-      input = decompressWebUri(input);
-    }
-
-    decode(result[model], input);
+    decode(result[model], isCompressedWebUri(input) ? decompressWebUri(input) : input);
   }
 
   result.setDomain = (domain) => {

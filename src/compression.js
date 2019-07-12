@@ -1,4 +1,4 @@
-const GS1DigitalLinkToolkit = require('../lib/GS1DigitalLinkToolkit');
+const GS1DigitalLinkToolkit = require('../lib/GS1DigitalLinkCompressionPrototype/GS1DigitalLinkToolkit');
 
 const toolkit = new GS1DigitalLinkToolkit();
 
@@ -43,14 +43,32 @@ const decompressWebUri = (uri, useShortText = false) =>
   toolkit.decompressGS1DigitalLink(uri, useShortText, getUriStem(uri));
 
 /**
- * Detect whether a URI string is compressed or not.
+ * Detect whether a string is a compressed URI or not.
+ * The GS1DigitalLinkToolkit returns one of three strings based on if the input looks compressed:
+ *   "uncompressed GS1 Digital Link"
+ *   "partially compressed GS1 Digital Link"
+ *   "fully compressed GS1 Digital Link"
+ *
+ * Note: this function includes the result's validity, meaning only valid compressed URIs,
+ * are supported. Since we cannot compress invalid URIs, this is acceptable.
  *
  * @param {string} uri - The URI.
- * @returns {boolean} true if the URI is compressed, false otherwise.
+ * @returns {boolean} true if the URI is valid and looks compressed, false otherwise.
  */
 const isCompressedWebUri = (uri) => {
   const data = toolkit.analyseURI(uri);
-  return ['fully', 'partially'].some(p => data.detected.includes(p));
+  const looksCompressed = ['fully', 'partially'].some(p => data.detected.includes(p));
+  if (!looksCompressed) {
+    return false;
+  }
+
+  try {
+    decompressWebUri(uri);
+    return true;
+  } catch (e) {
+    // An error is thrown if the decompress result is not a valid URI.
+    return false;
+  }
 };
 
 module.exports = {
