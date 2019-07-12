@@ -336,6 +336,11 @@ describe('DigitalLink', () => {
       expect(createUsingSetters().isValid()).to.equal(true);
     });
 
+    it('should transparently validate a valid compressed URI', () => {
+      const dl = DigitalLink('https://dlnkd.tn.gg/ARHKVAdpQg');
+      expect(dl.isValid()).to.equal(true);
+    });
+
     it('should parse a valid URL trace history', () => {
       const expected = {
         trace: [
