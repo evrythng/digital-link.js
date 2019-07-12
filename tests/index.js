@@ -63,9 +63,14 @@ const createUsingChain = () => DigitalLink()
   .setAttribute(DATA.customAttribute.key, DATA.customAttribute.value);
 
 describe('Exports', () => {
-  it('should export a creation function', () => {
+  it('should export DigitalLink', () => {
     expect(DigitalLink).to.be.a('function');
     expect(() => DigitalLink()).to.not.throw();
+  });
+
+  it('should export Utils.Rules', () => {
+    expect(Utils.Rules).to.be.an('object');
+    expect(Object.keys(Utils.Rules).length).to.equal(29);
   });
 
   it('should export Utils.testRule', () => {
@@ -80,9 +85,20 @@ describe('Exports', () => {
     expect(Utils.generateTraceHtml).to.be.a('function');
   });
 
-  it('should export Utils.Rules', () => {
-    expect(Utils.Rules).to.be.an('object');
-    expect(Object.keys(Utils.Rules).length).to.equal(29);
+  it('should export Utils.generateResultsHtml', () => {
+    expect(Utils.generateResultsHtml).to.be.a('function');
+  });
+
+  it('should export Utils.compressWebUri', () => {
+    expect(Utils.compressWebUri).to.be.a('function');
+  });
+
+  it('should export Utils.decompressWebUri', () => {
+    expect(Utils.decompressWebUri).to.be.a('function');
+  });
+
+  it('should export Utils.isCompressedWebUri', () => {
+    expect(Utils.isCompressedWebUri).to.be.a('function');
   });
 });
 
@@ -170,6 +186,14 @@ describe('DigitalLink', () => {
       const dl = DigitalLink(DATA.url);
       expect(dl.model).to.equal(undefined);
     });
+
+    it('should construct with invalid uncompressed input', () => {
+      // Including a partially constructed URI
+      const partial = 'https://gs1.evrythng.com/01/123';
+
+      expect(() => DigitalLink(partial)).to.not.throw();
+      expect(DigitalLink(partial).isValid()).to.equal(false);
+    });
   });
 
   describe('Invalid Creation', () => {
@@ -240,6 +264,57 @@ describe('DigitalLink', () => {
       };
 
       expect(value).to.deep.equal(expected);
+    });
+  });
+
+  describe('Setters', () => {
+    const dl = DigitalLink();
+
+    it('should set the domain', () => {
+      const input = 'https://gs1.evrythng.com';
+
+      expect(() => dl.setDomain(input)).to.not.throw();
+      expect(dl.getDomain()).to.equal(input);
+    });
+
+    it('should set the identifier', () => {
+      const ai = '01';
+      const value = '09780345418913';
+
+      expect(() => dl.setIdentifier(ai, value)).to.not.throw();
+      expect(dl.getIdentifier()).to.deep.equal({ [ai]: value });
+    });
+
+    it('should set a key qualifier', () => {
+      const ai = '21';
+      const value = '36527';
+
+      expect(() => dl.setKeyQualifier(ai, value)).to.not.throw();
+      expect(dl.getKeyQualifier(ai)).to.equal(value);
+    });
+
+    it('should set an attribute', () => {
+      const key = 'thngId';
+      const value = 'U5mQKGDpnymBwQwRakyBqeYh';
+
+      expect(() => dl.setAttribute(key, value)).to.not.throw();
+      expect(dl.getAttribute(key)).to.equal(value);
+    });
+
+    it('should throw for an invalid domain type', () => {
+      expect(() => dl.setDomain({ url: 'https://gs1.evrythng.com'})).to.throw();
+    });
+
+    it('should throw for an invalid identifier type', () => {
+      expect(() => dl.setIdentifier({ '01': '9780345418913' })).to.throw();
+    });
+
+    it('should throw for an invalid key qualifier type', () => {
+      expect(() => dl.setKeyQualifier({ '21': '36527' })).to.throw();
+    });
+
+    it('should throw for an invalid attribute type', () => {
+      expect(() => dl.setAttribute({ 'thngId': 'U5mQKGDpnymBwQwRakyBqeYh' })).to.throw();
     });
   });
 
@@ -320,6 +395,10 @@ describe('Utils', () => {
   it('should not validate when rules are not met', () => {
     expect(Utils.testRule(Utils.Rules.gtin, '9780345418913d')).to.equal(false);
     expect(Utils.testRule(Utils.Rules.ser, '{}')).to.equal(false);
+  });
+
+  it('should throw for an invalid rule name', () => {
+    expect(() => Utils.testRule('foo', '83479347')).to.throw();
   });
 
   it('should generate some stats HTML', () => {
