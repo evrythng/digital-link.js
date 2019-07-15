@@ -389,6 +389,58 @@ describe('DigitalLink', () => {
   });
 });
 
+describe('Compression', () => {
+  it('should compress a Digital Link URI', () => {
+    const input = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+    const expected = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
+
+    expect(Utils.compressWebUri(input)).to.equal(expected);
+  });
+
+  it('should decompress a compressed Digital Link URI', () => {
+    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
+    const expected = 'https://dlnkd.tn.gg/01/09780345418913/10/231/21/345345?15=120820';
+
+    expect(Utils.decompressWebUri(input)).to.equal(expected);
+  });
+
+  it('should decompress a compressed Digital Link URI using short AI names', () => {
+    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
+    const expected = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+
+    expect(Utils.decompressWebUri(input, true)).to.equal(expected);
+  });
+
+  it('should detect a compressed Digital Link URI', () => {
+    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
+
+    expect(Utils.isCompressedWebUri(input)).to.equal(true);
+  });
+
+  it('should detect an uncompressed Digital Link URI', () => {
+    const input = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+
+    expect(Utils.isCompressedWebUri(input)).to.equal(false);
+  });
+
+  it('should use optimisations and compress other key-value pairs by default', () => {
+    const input = 'https://dlnkd.tn.gg/01/9780345418913/21/43786?foo=bar';
+    const expected = 'https://dlnkd.tn.gg/DBHKVAdpQgqrCvBv0UMG21W';
+
+    expect(Utils.compressWebUri(input)).to.equal(expected);
+  });
+
+  it('should allow not using optimisations and compressing other key-value pairs', () => {
+    const input = 'https://dlnkd.tn.gg/01/9780345418913/21/43786?foo=bar';
+    const expected = 'https://dlnkd.tn.gg/ARHKVAdpQkIKqwo?foo=bar';
+    const useOptimisations = false;
+    const compressOtherKeyValuePairs = false;
+    const result = Utils.compressWebUri(input, useOptimisations, compressOtherKeyValuePairs);
+
+    expect(result).to.equal(expected);
+  });
+});
+
 describe('Utils', () => {
   it('should validate some rules', () => {
     expect(Utils.testRule(Utils.Rules.gtin, '9780345418913')).to.equal(true);
@@ -424,38 +476,5 @@ describe('Utils', () => {
     const sample = '<table class="apg-state">';
 
     expect(Utils.generateResultsHtml(input)).to.include(sample);
-  });
-
-  it('should compress a Digital Link URI', () => {
-    const input = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
-    const expected = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
-
-    expect(Utils.compressWebUri(input)).to.equal(expected);
-  });
-
-  it('should decompress a compressed Digital Link URI', () => {
-    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
-    const expected = 'https://dlnkd.tn.gg/01/09780345418913/10/231/21/345345?15=120820';
-
-    expect(Utils.decompressWebUri(input)).to.equal(expected);
-  });
-
-  it('should decompress a compressed Digital Link URI using short AI names', () => {
-    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
-    const expected = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
-
-    expect(Utils.decompressWebUri(input, true)).to.equal(expected);
-  });
-
-  it('should detect a compressed Digital Link URI', () => {
-    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
-
-    expect(Utils.isCompressedWebUri(input)).to.equal(true);
-  });
-
-  it('should detect an uncompressed Digital Link URI', () => {
-    const input = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
-
-    expect(Utils.isCompressedWebUri(input)).to.equal(false);
   });
 });

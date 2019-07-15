@@ -14,19 +14,24 @@ const getUriStem = uri => uri.split('/').slice(0, 3).join('/');
  * Use GS1DigitalLinkToolkit to compress a URI string.
  *
  * @param {string} uri - The URI to compress.
+ * @param {boolean} [useOptimisations] - Set to false to disable optimisations.
+ * @param {boolean} [compressOtherKeyValuePairs] - Set to false to disable compression of other
+ *                                                 key-value pairs.
  * @returns {string} The equivalent compressed URI.
  */
-const compressWebUri = (uri) => {
-  const useShortText = true;
+const compressWebUri = (
+  uri,
+  useOptimisations = true,
+  compressOtherKeyValuePairs = true
+) => {
   const uncompressedPrimary = false;
-  const useOptimisations = true;
-  const compressOtherKeyValuePairs = true;
+  const useShortText = false;
 
   return toolkit.compressGS1DigitalLink(
     uri,
-    useShortText,
+    useShortText,  // Not used
     getUriStem(uri),
-    uncompressedPrimary,
+    uncompressedPrimary,  // Not used
     useOptimisations,
     compressOtherKeyValuePairs
   );
