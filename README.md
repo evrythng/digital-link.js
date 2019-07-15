@@ -202,7 +202,7 @@ const compressedUri = Utils.compressWebUri(uri);
 // Compress without optimisations or compressing other key-value pairs
 const useOptimisations = false;
 const compressOtherKeyValuePairs = false;
-const semiCompressedUri = Utils.compressWebUri(useOptimisations, compressOtherKeyValuePairs);
+const semiCompressedUri = Utils.compressWebUri(uri, useOptimisations, compressOtherKeyValuePairs);
 
 // Decompress a compressed URI
 const decompressedUri = Utils.decompressWebUri(compressedUri);
