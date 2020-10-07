@@ -4,6 +4,8 @@
 DIGIT	= "0" / "1" / "2" / "3" / "4" /
 		  "5" / "6" / "7" / "8" / "9"
 
+BOOLEAN = "0" / "1"
+
 UPPERALPHA	= %x41-5A ; A-Z  ( ASCII characters 65-90 decimal, 41-5A hex)
 
 LOWERALPHA	= %x61-7A ; a-z  ( ASCII characters 97-122 decimal, 61-7A hex)
@@ -73,7 +75,7 @@ srin-code 	= "8019"	/ %s"srin"  ; Service Relation Instance Number
 tpx-code	= "235"	; third-party controlled serialised extension to GTIN
 uic-ext-code	= "7040"	; GS1 UIC with Extension 1 and Importer Index
 
-gtin-value	= 8DIGIT / 12DIGIT / 13DIGIT / 14DIGIT
+gtin-value		= 14DIGIT / 13DIGIT / 12DIGIT / 8DIGIT
 itip-value	= 14DIGIT 2DIGIT 2DIGIT ; 14 digits then 2 digits then 2 digits
 gmn-value 	= 1*30XCHAR  ; 1-30 characters from 82-chr subset
 cpid-value 	= 1*30YCHAR  ; 1-30 characters from 39-chr subset
@@ -429,11 +431,11 @@ rtnToPhoneParameter	= "4319=" 1*30XCHAR
 
 srvDescriptionParameter	= "4320=" 1*35XCHAR
 
-dangerousGoodsParameter = "4321=" "0" / "1"
+dangerousGoodsParameter = "4321=" BOOLEAN
 
-authToLeaveParameter	= "4322=" "0" / "1"
+authToLeaveParameter	= "4322=" BOOLEAN
 
-sigRequiredParameter	= "4323=" "0" / "1"
+sigRequiredParameter	= "4323=" BOOLEAN
 
 notBeforeDelDateParameter	= "4324=" 10DIGIT
 
@@ -522,8 +524,7 @@ queryStringParam 	= netWeightVMTIParameter / lengthVMTIParameter /
 		refNoParameter / couponIDNAParameter / pointsParameter /
 		itipContentParameter / certificationRefParameter /
 		aquaticSpeciesParameter / opticalSensorParameter /
-		paperlessCouponIDNAParameter /
-		internalParameter / mutualParameter / extensionParameter /
+		paperlessCouponIDNAParameter / mutualParameter /
 		shipToCompParameter / shipToNameParameter /
 		shipToAdd1Parameter / shipToAdd2Parameter /
 		shipToSubParameter / shipToLocParameter /
@@ -540,7 +541,8 @@ queryStringParam 	= netWeightVMTIParameter / lengthVMTIParameter /
 		gtinParameter  / itipParameter / gmnParameter / cpidParameter /
 		glnParameter / partyGlnParameter / gsrnpParameter /
 		gsrnParameter / gcnParameter / ssccParameter / gdtiParameter /
-		gincParameter / gsinParameter / graiParameter / giaiParameter
+		gincParameter / gsinParameter / graiParameter /
+		giaiParameter / extensionParameter
 
 scheme	= "https" / "http"
 
