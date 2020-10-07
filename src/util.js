@@ -20,7 +20,8 @@ const addQueryParams = (result, attributes) => Object.keys(attributes).reduce((r
  * @param {string} str - The input string.
  * @returns {string} Either canonicalGS1webURI or customGS1webURI depending on format.
  */
-const getStartRule = str => str.includes('id.gs1.org') ? 'canonicalGS1webURI' : 'customGS1webURI';
+//const getStartRule = str => str.includes('id.gs1.org') ? 'referenceGS1webURI' : 'uncompressedCustomGS1webURI'/*'uncompressedCustomGS1webURI'*/;
+const getStartRule = str => str.includes('id.gs1.org') ? 'referenceGS1webURI' : 'uncompressedCustomGS1webURI';
 
 /**
  * Create an initialise a parser object, used for multiple applications.
@@ -117,19 +118,19 @@ const getTrace = (inputStr) => {
 
   const result = parser.parse(GRAMMAR, getStartRule(inputStr), apglib.utils.stringToChars(inputStr), []);
   const traceHtml = parser.trace.toHtmlPage('ascii', 'Parsing details:')
-    .replace('display mode: ASCII', '');
+      .replace('display mode: ASCII', '');
   const rows = traceHtml.substring(traceHtml.indexOf('<table '), traceHtml.indexOf('</table>'))
-    .split('<tr>')
-    .filter(item => item.includes('&uarr;M'));
+      .split('<tr>')
+      .filter(item => item.includes('&uarr;M'));
   const trace = rows.filter(row => row.includes('apg-match'))
-    .map((row) => {
-      const rule = row.match(/\((.*?)(?=\))/)[1];
-      const sample = row.substring(row.indexOf(')'));
-      const match = between(sample, 'match">', '<');
-      const remainder = between(sample, 'remainder">', '<');
-      return { rule, match, remainder };
-    })
-    .filter(item => item.match.length > 1);
+      .map((row) => {
+        const rule = row.match(/\((.*?)(?=\))/)[1];
+        const sample = row.substring(row.indexOf(')'));
+        const match = between(sample, 'match">', '<');
+        const remainder = between(sample, 'remainder">', '<');
+        return { rule, match, remainder };
+      })
+      .filter(item => item.match.length > 1);
   return { trace, success: result.success };
 };
 
@@ -144,9 +145,9 @@ const generateStatsHtml = (inputStr) => {
   parser.parse(GRAMMAR, getStartRule(inputStr), apglib.utils.stringToChars(inputStr), []);
 
   return parser.stats.toHtml('ops', 'ops-only stats')
-   + parser.stats.toHtml('index', 'rules ordered by index')
-   + parser.stats.toHtml('alpha', 'rules ordered alphabetically')
-   + parser.stats.toHtml('hits', 'rules ordered by hit count');
+      + parser.stats.toHtml('index', 'rules ordered by index')
+      + parser.stats.toHtml('alpha', 'rules ordered alphabetically')
+      + parser.stats.toHtml('hits', 'rules ordered by hit count');
 };
 
 /**
