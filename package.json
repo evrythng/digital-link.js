@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production",
     "build-dev": "webpack --config webpack.config.js --mode development",
-    "test": "nyc mocha tests/index.js && rm -rf .nyc_output"
+    "test": "nyc mocha tests/index.js && rm -rf .nyc_output",
+    "prepublishOnly": "npm run build"
   },
   "author": "EVRYTHNG",
   "license": "Apache-2.0",

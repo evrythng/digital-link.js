@@ -399,7 +399,7 @@ shipToAdd2Parameter	= "4303=" 1*70XCHAR
 
 shipToSubParameter	= "4304=" 1*70XCHAR
 
-;shipToLocparameter = "4305=" 1*70XCHAR
+shipToLocParameter	= "4305=" 1*70XCHAR
 
 shipToRegParameter	= "4306=" 1*70XCHAR
 
@@ -429,11 +429,11 @@ rtnToPhoneParameter	= "4319=" 1*30XCHAR
 
 srvDescriptionParameter	= "4320=" 1*35XCHAR
 
-dangerousGoodsParameter = "4321=" "0" / "1"
+dangerousGoodsParameter	= "4321=" "0" | "1"
 
-authToLeaveParameter	= "4322=" "0" / "1"
+authToLeaveParameter	= "4322=" "0" | "1"
 
-sigRequiredParameter	= "4323=" "0" / "1"
+sigRequiredParameter	= "4323=" "0" | "1"
 
 notBeforeDelDateParameter	= "4324=" 10DIGIT
 
@@ -525,7 +525,7 @@ queryStringParam 	= netWeightVMTIParameter / lengthVMTIParameter /
 		paperlessCouponIDNAParameter /
 		internalParameter / mutualParameter / extensionParameter /
 		shipToCompParameter / shipToNameParameter /
-		shipToAdd1Parameter / shipToAdd2Parameter /
+		shipToaAdd1Parameter / shipToaAdd2Parameter /
 		shipToSubParameter / shipToLocParameter /
 		shipToRegParameter / shipToCountryParameter /
 		shipToPhoneParameter / rtnToCompParameter /
@@ -542,7 +542,7 @@ queryStringParam 	= netWeightVMTIParameter / lengthVMTIParameter /
 		gsrnParameter / gcnParameter / ssccParameter / gdtiParameter /
 		gincParameter / gsinParameter / graiParameter / giaiParameter
 
-scheme	= "https" / "http"
+scheme	= "http" / "https"
 
 unreserved	= ALPHA / DIGIT / "-" / "." / "_" / "~"
 
@@ -603,6 +603,6 @@ uncompressedGS1webURIPattern 	= gs1path [queryStringComp]
 
 referenceGS1webURI	= "https://id.gs1.org" uncompressedGS1webURIPattern
 
-customURIstem		= scheme "://" hostname ; *( "/" segment )
+customURIstem	= scheme "://" hostname *( "/" segment )
 
 uncompressedCustomGS1webURI 	= customURIstem uncompressedGS1webURIPattern
