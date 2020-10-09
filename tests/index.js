@@ -70,7 +70,7 @@ describe('Exports', () => {
 
   it('should export Utils.Rules', () => {
     expect(Utils.Rules).to.be.an('object');
-    expect(Object.keys(Utils.Rules).length).to.equal(29);
+    expect(Object.keys(Utils.Rules).length).to.equal(30);
   });
 
   it('should export Utils.testRule', () => {
@@ -292,6 +292,36 @@ describe('DigitalLink', () => {
       expect(dl.getKeyQualifier(ai)).to.equal(value);
     });
 
+    it('should set the key identifiers in the right order', () => {
+      const values = {
+        'gtin':{
+          'ai':'01',
+          'value':'12345678'
+        },
+        'lot':{
+          'ai':'10',
+          'value':'211'
+        },
+        'ser':{
+          'ai':'21',
+          'value':'2121'
+        },
+        'cpv':{
+          'ai':'22',
+          'value':'122113'
+        },
+      };
+
+      dl.setDomain('https://gs1.evrythng.com');
+      dl.setIdentifier(values.gtin.ai, values.gtin.value);
+      dl.setKeyQualifier(values.lot.ai, values.lot.value);
+      dl.setKeyQualifier(values.cpv.ai, values.cpv.value);
+      dl.setKeyQualifier(values.ser.ai, values.ser.value);
+
+      expect(dl.isValid()).to.equal(true);
+
+    });
+
     it('should set an attribute', () => {
       const key = 'thngId';
       const value = 'U5mQKGDpnymBwQwRakyBqeYh';
@@ -387,6 +417,7 @@ describe('DigitalLink', () => {
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913d');
       expect(dl.getValidationTrace()).to.deep.equal(expected);
     });
+
   });
 });
 

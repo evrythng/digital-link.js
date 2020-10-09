@@ -48,6 +48,18 @@ const validateRule = (rule, inputStr) => {
 };
 
 /**
+ * The function search in the Grammar file for the rule and return it.
+ *
+ * @param {String} rule , it has to be the name of the rule (if the line in the grammar file doesn't start with this String, the function won't find the rule)
+ * @returns {String} The rule if it is in the grammar file, otherwise undefined
+ */
+const findTheRule = (rule) => {
+  const file = GRAMMAR.toString();
+  const lines = file.split('\n');
+  return lines.find(line => line.startsWith(rule));
+};
+
+/**
  * Run the apglib parser over the Digital Link URL string.
  *
  * @param {string} inputStr - The DigitalLink as a string.
@@ -186,4 +198,5 @@ module.exports = {
   generateStatsHtml,
   generateTraceHtml,
   generateResultsHtml,
+  findTheRule,
 };
