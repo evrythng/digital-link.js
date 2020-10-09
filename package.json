@@ -7,7 +7,12 @@
     "build": "webpack --config webpack.config.js --mode production",
     "build-dev": "webpack --config webpack.config.js --mode development",
     "test": "nyc mocha tests/index.js && rm -rf .nyc_output",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prettier": "prettier --write src/**/*.js",
+    "lint": "eslint src"
+  },
+  "eslintConfig": {
+    "extends": "@evrythng/eslint-config-evrythng"
   },
   "author": "EVRYTHNG",
   "license": "Apache-2.0",
@@ -22,6 +27,7 @@
     "webpack-cli": "^3.3.6"
   },
   "dependencies": {
+    "@evrythng/eslint-config-evrythng": "github:evrythng/eslint-config-evrythng",
     "apg-lib": "^3.2.0"
   },
   "repository": {
