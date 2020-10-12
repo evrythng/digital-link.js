@@ -55,10 +55,10 @@ const validateRule = (rule, inputStr) => {
 /**
  * The function search in the Grammar file for the rule and return it.
  *
- * @param {string} rule - , it has to be the name of the rule (if the line in the grammar file doesn't start with this String, the function won't find the rule)
+ * @param {string} rule - The name of the rule (if the line in the grammar file doesn't start with this String, the function won't find the rule)
  * @returns {string} The rule if it is in the grammar file, otherwise undefined
  */
-const findTheRule = rule => {
+const getRule = rule => {
   const file = GRAMMAR.toString();
   const lines = file.split('\n');
   return lines.find(line => line.startsWith(rule));
@@ -215,5 +215,5 @@ module.exports = {
   generateStatsHtml,
   generateTraceHtml,
   generateResultsHtml,
-  findTheRule,
+  findTheRule: getRule,
 };

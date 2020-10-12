@@ -98,17 +98,17 @@ const decode = (dl, str) => {
  *
  * @returns {Map} A map that contains all the possible key qualifiers and their weights. Example : { '10': 2, '21': 1, '22': 3, cpv: 3, lot: 2, ser: 1 }
  */
-const giveTheKeyQualifiersAWeight = () => {
+const getKeyQualifierWeights = () => {
   const rule = findTheRule(Rules.gtinPath);
 
-  if (!rule) throw new Error(`The rule ${rule} wasn't find in the grammar file`);
+  if (!rule) throw new Error(`The rule ${rule} wasn't found in the grammar file`);
 
   // if my rule is : 'gtin-path  = gtin-comp  [cpv-comp] [lot-comp] [ser-comp]'
-  // In my parameters array, I'll have : [ 'cpv-comp', 'lot-comp', 'ser-comp' ]
-  const parameters = rule
+  // In my parameterNames array, I'll have : [ 'cpv-comp', 'lot-comp', 'ser-comp' ]
+  const parameterNames = rule
     .substring(rule.indexOf('=') + 1)
     .split(' ')
-    .map(item => item.replace('/ /g', ''))
+    .map(item => item.split(' ').join(''))
     .filter(item => item.startsWith('['))
     .map(item => item.replace('[', '').replace(']', ''));
 
@@ -116,36 +116,36 @@ const giveTheKeyQualifiersAWeight = () => {
   // [ 'cpv-code  = "22" / %s"cpv"   ; Consumer Product Variant',
   //   'lot-code  = "10" / %s"lot"   ; Batch/Lot identifier',
   //   'ser-code  = "21" / %s"ser"   ; GTIN Serial Number' ]
-  const parametersCodeRules = parameters.map(param => findTheRule(param.replace('comp', 'code')));
+  const parametersCodeRules = parameterNames.map(param =>
+    findTheRule(param.replace('comp', 'code')),
+  );
 
-  // I retrieve the code of each parameter : [ '22', '10', '21' ]
-  const parametersCodes = parametersCodeRules.map(singleRule => singleRule.match(/(\d+)/)[0]);
+  // I retrieve the code value of each parameter : [ '22', '10', '21' ]
+  const parametersCodesValues = parametersCodeRules.map(singleRule => singleRule.match(/(\d+)/)[0]);
 
-  const keyQualifiersCodeWeight = parametersCodes.map((elem, index) => {
-    const str = elem.toString();
-    const map = {};
-    map[str] = parameters.length - index;
-    return map;
+  const keyQualifiersCodeWeight = parametersCodesValues.map((elem, index) => {
+    return {
+      [elem.toString()]: parameterNames.length - index,
+    };
   });
 
-  const keyQualifiersNameWeight = parameters.map((elem, index) => {
-    const str = elem.toString().replace('-comp', '');
-    const map = {};
-    map[str] = parameters.length - index;
-    return map;
+  const keyQualifiersNameWeight = parameterNames.map((elem, index) => {
+    return {
+      [elem.toString().replace('-comp', '')]: parameterNames.length - index,
+    };
   });
 
   const keyQualifiersWeight = new Map();
 
   // I add the two maps to the keyQualifiersWeight Map
   keyQualifiersNameWeight.forEach(elem => {
-    Object.keys(elem).forEach(item => {
-      keyQualifiersWeight[item] = elem[item];
+    Object.entries(elem).forEach(([name, value]) => {
+      keyQualifiersWeight[name] = value;
     });
   });
   keyQualifiersCodeWeight.forEach(elem => {
-    Object.keys(elem).forEach(item => {
-      keyQualifiersWeight[item] = elem[item];
+    Object.entries(elem).forEach(([name, value]) => {
+      keyQualifiersWeight[name] = value;
     });
   });
 
@@ -167,7 +167,7 @@ const encode = dl => {
 
   // Key qualifiers
   if (dl.keyQualifiers) {
-    const keyQualifiersWeight = giveTheKeyQualifiersAWeight();
+    const keyQualifiersWeight = getKeyQualifierWeights();
 
     // The key qualifiers have to be added in a special order so I need to sort them and then add them to the string
     Object.keys(dl.keyQualifiers)
