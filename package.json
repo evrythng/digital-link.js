@@ -24,10 +24,10 @@
     "mocha": "^5.2.0",
     "nyc": "^14.1.1",
     "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.6",
+    "@evrythng/eslint-config-evrythng": "^4.0.1"
   },
   "dependencies": {
-    "@evrythng/eslint-config-evrythng": "github:evrythng/eslint-config-evrythng",
     "apg-lib": "^3.2.0"
   },
   "repository": {
