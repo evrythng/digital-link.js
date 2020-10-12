@@ -24,7 +24,6 @@
     "webpack-cli": "^3.3.6"
   },
   "dependencies": {
-    "@evrythng/eslint-config-evrythng": "github:evrythng/eslint-config-evrythng",
     "apg-lib": "^3.2.0"
   },
   "repository": {
