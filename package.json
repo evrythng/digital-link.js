@@ -11,9 +11,6 @@
     "prettier": "prettier --write src/**/*.js",
     "lint": "eslint src"
   },
-  "eslintConfig": {
-    "extends": "@evrythng/eslint-config-evrythng"
-  },
   "author": "EVRYTHNG",
   "license": "Apache-2.0",
   "devDependencies": {
