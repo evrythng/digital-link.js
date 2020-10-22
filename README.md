@@ -262,7 +262,6 @@ The trace steps (which matched a parser rule) are also shown, allowing you to
 see which parts of your input did not match any rule. The output of
 `toJsonString()` is also shown as an insight into the make-up of the URL itself.
 
-
 ## Utilities
 
 Since this library is based on
@@ -322,7 +321,6 @@ particular:
 * [`GS1DigitalLinkCompressionPrototype`](https://github.com/gs1/GS1DigitalLinkCompressionPrototype) -
   which is a prototype implementation of the Digital Link compression as
   specified in the GS1 Digital Link 1.1 draft specification.
-
 
 ## Deployment
 

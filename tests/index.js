@@ -368,6 +368,16 @@ describe('DigitalLink', () => {
       expect(dl.isValid()).to.equal(true);
     });
 
+    it('should validate an URL with a custom path using the grammar', () => {
+      const dl = DigitalLink('https://example.com/my/custom/path/01/01234567890128/21/12345/10/4512');
+      console.log(dl.getDomain());
+      console.log(dl.getIdentifier());
+      console.log(dl.getKeyQualifiers());
+      console.log(dl.toWebUriString());
+      console.log(dl.getValidationTrace());
+      expect(dl.isValid()).to.equal(true);
+    });
+
     it('should transparently validate a valid compressed URI', () => {
       const dl = DigitalLink('https://dlnkd.tn.gg/ARHKVAdpQg');
       expect(dl.isValid()).to.equal(true);
@@ -509,6 +519,14 @@ describe('Utils', () => {
     const res = Utils.generateResultsHtml(input);
     expect(res).to.include(sample);
   });
+
+  it('should find the identifier', () => {
+    const segments = ['some','01','path','01','12345678','21','4545646'];
+    expect(Utils.getIdentifierIndex(segments)).to.equal(3);
+  });
+
+
+
 });
 
 describe('Grammar', () => {
@@ -518,6 +536,7 @@ describe('Grammar', () => {
   });
 
   //I created this test to check if a single parameter can be recognized
+  //Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
   it('should recognize notBeforeDelDateParameter', () => {
     const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913?4324=1234567891');
     let containTheParameter = false;
@@ -529,6 +548,7 @@ describe('Grammar', () => {
   });
 
   //I created this test to check if a boolean paramter can be recognized
+  //Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
   it('should recognize dangerousGoodsParameter', () => {
     const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913?4321=1');
     let containTheParameter = false;

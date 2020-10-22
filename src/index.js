@@ -12,6 +12,7 @@ const {
   generateTraceHtml,
   generateResultsHtml,
   findTheRule,
+  getIdentifierIndex
 } = require('./util');
 const { compressWebUri, decompressWebUri, isCompressedWebUri } = require('./compression');
 
@@ -74,11 +75,33 @@ const decode = (dl, str) => {
   const segments = (str.includes('?') ? str.substring(0, str.indexOf('?')) : str)
     .split('/')
     .filter(p => p.length);
-  dl.identifier[segments.shift()] = segments.shift();
+
+  //let's find the identifier to know where the domain stops and where are the keyQualifiers
+
+  const endPath = [];
+  const afterIdentifier = [];
+  const indexIdentifier = getIdentifierIndex(segments);
+
+  if (indexIdentifier===-1) {
+    endPath.push(...segments);
+  }else{
+    for(let i=0; i<indexIdentifier; i++){
+      endPath.push(segments[i]);
+    }
+
+    dl.identifier[segments[indexIdentifier]] = segments[indexIdentifier+1];
+
+    for (let i=indexIdentifier+2; i<segments.length;i++){
+      afterIdentifier.push(segments[i]);
+    }
+  }
+
+  if (endPath.length)
+    dl.domain = dl.domain + '/' + endPath.join('/');
 
   // /x/y until query
-  while (segments.length) {
-    dl.keyQualifiers[segments.shift()] = segments.shift();
+  while (afterIdentifier.length) {
+    dl.keyQualifiers[afterIdentifier.shift()] = afterIdentifier.shift();
   }
 
   // ?x=y...
@@ -91,6 +114,7 @@ const decode = (dl, str) => {
         dl.attributes[key] = value;
       });
   }
+
 };
 
 /**
@@ -297,5 +321,6 @@ module.exports = {
     compressWebUri,
     decompressWebUri,
     isCompressedWebUri,
+    getIdentifierIndex,
   },
 };
