@@ -174,6 +174,31 @@ const encode = dl => {
 };
 
 /**
+ *
+ * @param {string} webUriString - the webUriString of the DL that has to be validated
+ * @param {string} domain - the domain of the DL that has to be validated
+ * @returns {boolean} if the DL is valid or not
+ */
+const isValid = (webUriString, domain) => {
+  // If my DL is something like this : https://example.com/my/custom/path/01/01234567890128/21/12345/10/4512
+  // I need to send this to the validateURL function : https://example.com/01/01234567890128/21/12345/10/4512
+  // Otherwise, the DL will never be validated since the custom path (/my/custom/path) is not handled by the grammar file.
+  const domainWithoutProtocol = domain.replace('https://', '').replace('http://', '');
+
+  const splitDomain = domainWithoutProtocol.split('/');
+
+  if (splitDomain.length > 1) {
+    // It has a custom path
+    splitDomain.shift(); // [ 'my', 'custom', 'path' ]
+    const customPath = `/${splitDomain.join('/')}`; // /my/custom/path
+    return validateUrl(webUriString.replace(customPath, ''));
+  }
+
+  // It doesn't have a custom path
+  return validateUrl(webUriString);
+};
+
+/**
  * Construct a DigitalLink either from object params, a string, or built using
  * the available setters.
  *
@@ -250,7 +275,7 @@ const DigitalLink = input => {
   result.toWebUriString = () => encode(result[model]);
   result.toCompressedWebUriString = () => compressWebUri(result.toWebUriString());
   result.toJsonString = () => JSON.stringify(result[model]);
-  result.isValid = () => validateUrl(result.toWebUriString());
+  result.isValid = () => isValid(result.toWebUriString(), result.getDomain());
   result.getValidationTrace = () => getTrace(result.toWebUriString());
 
   return result;

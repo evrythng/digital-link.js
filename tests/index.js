@@ -403,15 +403,13 @@ describe('DigitalLink', () => {
     });
 
     it('should validate an URL with a custom path using the grammar', () => {
-      const dl = DigitalLink(
-        'https://example.com/my/custom/path/01/01234567890128/21/12345/10/4512',
-      );
-      /* console.log(dl.getDomain());
-      console.log(dl.getIdentifier());
-      console.log(dl.getKeyQualifiers());
-      console.log(dl.toWebUriString());
-      console.log(dl.getValidationTrace()); */
+      const dl = DigitalLink('https://example.com/some/other/path/info/01/01234567890128/21/12345');
       expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should not validate an URL with a custom path using the grammar', () => {
+      const dl = DigitalLink('https://example.com/my/custom/path/01/0123456789d/21/12345/10/4512');
+      expect(dl.isValid()).to.equal(false);
     });
 
     it('should transparently validate a valid compressed URI', () => {
