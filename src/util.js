@@ -9,22 +9,22 @@ const GRAMMAR = new GrammarObject();
  * All the possible identifiers
  */
 const identifiersCodes = [
-  "gtin-code",
-  "itip-code",
-  "gmn-code",
-  "cpid-code",
-  "gln-code",
-  "partyGln-code",
-  "gsrnp-code",
-  "gsrn-code",
-  "gcn-code",
-  "sscc-code",
-  "gdti-code",
-  "ginc-code",
-  "gsin-code",
-  "grai-code",
-  "giai-code",
-]
+  'gtin-code',
+  'itip-code',
+  'gmn-code',
+  'cpid-code',
+  'gln-code',
+  'partyGln-code',
+  'gsrnp-code',
+  'gsrn-code',
+  'gcn-code',
+  'sscc-code',
+  'gdti-code',
+  'ginc-code',
+  'gsin-code',
+  'grai-code',
+  'giai-code',
+];
 
 /**
  * Add query param string pairs to the string result so far.
@@ -74,50 +74,36 @@ const validateRule = (rule, inputStr) => {
 };
 
 /**
- * The function search in the Grammar file for the rule and return it.
  *
- * @param {string} rule - The name of the rule (if the line in the grammar file doesn't start with this String, the function won't find the rule)
- * @returns {string} The rule if it is in the grammar file, otherwise undefined
- */
-const getRule = rule => {
-  const file = GRAMMAR.toString();
-  const lines = file.split('\n');
-  return lines.find(line => line.startsWith(rule));
-};
-
-/**
- *
- * @param {Array<String>} segments - The list of the url path element
+ * @param {Array<string>} segments - The list of the url path element
  * if the url is https://example.com/some/01/other/path/info/01/01234567890128/21/12345?example=true
  * segment will be [some,01,other,path,info,01,01234567890128,21,12345]
  * And it will return 5. (the second '01' is the indentifier)
  * @returns {int} the position of the indentifier in the array (-1 if it there is not any identifier).
  */
 const getIdentifierIndex = segments => {
-  //I'm going through the array to find the identifier
-  //I'm starting the loop at the end of the array because if I have this link for example :
-  //https://example.com/some/01/other/path/info/01/01234567890128/21/12345
-  //The identifier should be the last 01, and not the first one
-  for(let i=segments.length-1; i>=1; i-=2){
-    const code = segments[i-1];
-    //const value = segments_copy[i];
+  // I'm going through the array to find the identifier
+  // I'm starting the loop at the end of the array because if I have this link for example :
+  // https://example.com/some/01/other/path/info/01/01234567890128/21/12345
+  // The identifier should be the last 01, and not the first one
+  for (let i = segments.length - 1; i >= 1; i -= 2) {
+    const code = segments[i - 1];
+    // const value = segments_copy[i];
     let isIdentifier = false;
 
-    for (let i=0; i<identifiersCodes.length; i++){
-      if (validateRule(identifiersCodes[i],code)) {
+    for (let j = 0; j < identifiersCodes.length; j += 1) {
+      if (validateRule(identifiersCodes[j], code)) {
         isIdentifier = true;
         break;
       }
     }
 
-    if (isIdentifier){
-      return i-1;
+    if (isIdentifier) {
+      return i - 1;
     }
-
   }
 
   return -1;
-
 };
 
 /**
@@ -272,5 +258,4 @@ module.exports = {
   generateTraceHtml,
   generateResultsHtml,
   getIdentifierIndex,
-  findTheRule: getRule,
 };

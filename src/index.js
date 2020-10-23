@@ -1,5 +1,6 @@
 'use strict';
 
+const IDENTIFIER_LIST = require('./data/identifier-list.json');
 const {
   addQueryParams,
   assertPropertyType,
@@ -11,8 +12,7 @@ const {
   generateStatsHtml,
   generateTraceHtml,
   generateResultsHtml,
-  findTheRule,
-  getIdentifierIndex
+  getIdentifierIndex,
 } = require('./util');
 const { compressWebUri, decompressWebUri, isCompressedWebUri } = require('./compression');
 
@@ -49,7 +49,6 @@ const Rules = {
   srin: 'srin-value',
   customGS1webURI: 'customGS1webURI',
   canonicalGS1webURI: 'canonicalGS1webURI',
-  gtinPath: 'gtin-path',
 };
 
 /**
@@ -76,28 +75,27 @@ const decode = (dl, str) => {
     .split('/')
     .filter(p => p.length);
 
-  //let's find the identifier to know where the domain stops and where are the keyQualifiers
+  // let's find the identifier to know where the domain stops and where are the keyQualifiers
 
   const endPath = [];
   const afterIdentifier = [];
   const indexIdentifier = getIdentifierIndex(segments);
 
-  if (indexIdentifier===-1) {
+  if (indexIdentifier === -1) {
     endPath.push(...segments);
-  }else{
-    for(let i=0; i<indexIdentifier; i++){
+  } else {
+    for (let i = 0; i < indexIdentifier; i += 1) {
       endPath.push(segments[i]);
     }
 
-    dl.identifier[segments[indexIdentifier]] = segments[indexIdentifier+1];
+    dl.identifier[segments[indexIdentifier]] = segments[indexIdentifier + 1];
 
-    for (let i=indexIdentifier+2; i<segments.length;i++){
+    for (let i = indexIdentifier + 2; i < segments.length; i += 1) {
       afterIdentifier.push(segments[i]);
     }
   }
 
-  if (endPath.length)
-    dl.domain = dl.domain + '/' + endPath.join('/');
+  if (endPath.length) dl.domain = `${dl.domain}/${endPath.join('/')}`;
 
   // /x/y until query
   while (afterIdentifier.length) {
@@ -114,66 +112,30 @@ const decode = (dl, str) => {
         dl.attributes[key] = value;
       });
   }
-
 };
 
 /**
- * Extract from the grammar rules the order of all the possible key qualifiers and return a map with a weight for each parameter
+ * Extract from idenfier-list.json the list of key Qualifiers and their 'weight' according to their order.
  *
- * @returns {Map} A map that contains all the possible key qualifiers and their weights. Example : { '10': 2, '21': 1, '22': 3, cpv: 3, lot: 2, ser: 1 }
+ * @param {string} identifierCode - The identifier of the digital link
+ * @returns {Map} A map that contains all the possible key qualifiers and their weights. Example : { '10': 1, '21': 0, '22': 2, cpv: 0, lot: 1, ser: 2 }
  */
-const getKeyQualifierWeights = () => {
-  const rule = findTheRule(Rules.gtinPath);
+const getKeyQualifierWeights = identifierCode => {
+  try {
+    const identifier = IDENTIFIER_LIST.find(item => item.code === identifierCode);
 
-  if (!rule) throw new Error(`The rule ${rule} wasn't found in the grammar file`);
+    const keyQualifiersWeight = new Map();
 
-  // if my rule is : 'gtin-path  = gtin-comp  [cpv-comp] [lot-comp] [ser-comp]'
-  // In my parameterNames array, I'll have : [ 'cpv-comp', 'lot-comp', 'ser-comp' ]
-  const parameterNames = rule
-    .substring(rule.indexOf('=') + 1)
-    .split(' ')
-    .map(item => item.split(' ').join(''))
-    .filter(item => item.startsWith('['))
-    .map(item => item.replace('[', '').replace(']', ''));
+    for (let i = 0; i < identifier.keyQualifiers.length; i += 1)
+      keyQualifiersWeight[identifier.keyQualifiers[i]] = i;
 
-  // I retrieve the code rules of each parameter
-  // [ 'cpv-code  = "22" / %s"cpv"   ; Consumer Product Variant',
-  //   'lot-code  = "10" / %s"lot"   ; Batch/Lot identifier',
-  //   'ser-code  = "21" / %s"ser"   ; GTIN Serial Number' ]
-  const parametersCodeRules = parameterNames.map(param =>
-    findTheRule(param.replace('comp', 'code')),
-  );
+    for (let i = 0; i < identifier.keyQualifiersName.length; i += 1)
+      keyQualifiersWeight[identifier.keyQualifiersName[i]] = i;
 
-  // I retrieve the code value of each parameter : [ '22', '10', '21' ]
-  const parametersCodesValues = parametersCodeRules.map(singleRule => singleRule.match(/(\d+)/)[0]);
-
-  const keyQualifiersCodeWeight = parametersCodesValues.map((elem, index) => {
-    return {
-      [elem.toString()]: parameterNames.length - index,
-    };
-  });
-
-  const keyQualifiersNameWeight = parameterNames.map((elem, index) => {
-    return {
-      [elem.toString().replace('-comp', '')]: parameterNames.length - index,
-    };
-  });
-
-  const keyQualifiersWeight = new Map();
-
-  // I add the two maps to the keyQualifiersWeight Map
-  keyQualifiersNameWeight.forEach(elem => {
-    Object.entries(elem).forEach(([name, value]) => {
-      keyQualifiersWeight[name] = value;
-    });
-  });
-  keyQualifiersCodeWeight.forEach(elem => {
-    Object.entries(elem).forEach(([name, value]) => {
-      keyQualifiersWeight[name] = value;
-    });
-  });
-
-  return keyQualifiersWeight;
+    return keyQualifiersWeight;
+  } catch (e) {
+    return {};
+  }
 };
 
 /**
@@ -191,12 +153,12 @@ const encode = dl => {
 
   // Key qualifiers
   if (dl.keyQualifiers) {
-    const keyQualifiersWeight = getKeyQualifierWeights();
+    const keyQualifiersWeight = getKeyQualifierWeights(idKey);
 
     // The key qualifiers have to be added in a special order so I need to sort them and then add them to the string
     Object.keys(dl.keyQualifiers)
       .sort((a, b) => {
-        return keyQualifiersWeight[b] - keyQualifiersWeight[a];
+        return keyQualifiersWeight[a] - keyQualifiersWeight[b];
       })
       .forEach(key => {
         result += `/${key}/${dl.keyQualifiers[key]}`;

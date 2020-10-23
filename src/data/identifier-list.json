@@ -1,0 +1,109 @@
+[
+  {
+    "code": "00",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "01",
+    "keyQualifiers": [
+      "22",
+      "10",
+      "21"
+    ],
+    "keyQualifiersName": [
+      "cpv",
+      "lot",
+      "ser"
+    ]
+  },
+  {
+    "code": "253",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "255",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "401",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "402",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "414",
+    "keyQualifiers": [
+      "254"
+    ],
+    "keyQualifiersName": [
+      "glnx"
+    ]
+  },
+  {
+    "code": "417",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "8003",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "8004",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "8006",
+    "keyQualifiers": [
+      "22",
+      "10",
+      "21"
+    ],
+    "keyQualifiersName": [
+      "cpv",
+      "lot",
+      "ser"
+    ]
+  },
+  {
+    "code": "8010",
+    "keyQualifiers": [
+      "8011"
+    ],
+    "keyQualifiersName": [
+      "cpsn"
+    ]
+  },
+  {
+    "code": "8013",
+    "keyQualifiers": [],
+    "keyQualifiersName": []
+  },
+  {
+    "code": "8017",
+    "keyQualifiers": [
+      "8019"
+    ],
+    "keyQualifiersName": [
+      "srin"
+    ]
+  },
+  {
+    "code": "8018",
+    "keyQualifiers": [
+      "8019"
+    ],
+    "keyQualifiersName": [
+      "srin"
+    ]
+  }
+]

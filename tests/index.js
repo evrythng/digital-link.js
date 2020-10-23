@@ -1,5 +1,7 @@
+'use strict';
+
 const { expect } = require('chai');
-const { DigitalLink, Utils } = require('../');
+const { DigitalLink, Utils } = require('..');
 
 const DATA = {
   domain: 'https://gs1.evrythng.com',
@@ -23,11 +25,19 @@ const DATA = {
     key: 'thngId',
     value: 'U5mQKGDpnymBwQwRakyBqeYh',
   },
-  url: 'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh',
-  jsonString: '{"domain":"https://gs1.evrythng.com","identifier":{"01":"9780345418913"},"keyQualifiers":{"10":"38737643","21":"58943"},"attributes":{"15":"230911","thngId":"U5mQKGDpnymBwQwRakyBqeYh"}}',
-  compressedWebUri: 'https://gs1.evrythng.com/HxHKVAdpQhCTxbrOF_yEFcx_4a2GeAh1mFOZkChg6Z8pgcEMEWpMganmIQ',
+  url:
+    'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh',
+  jsonString:
+    '{"domain":"https://gs1.evrythng.com","identifier":{"01":"9780345418913"},"keyQualifiers":{"10":"38737643","21":"58943"},"attributes":{"15":"230911","thngId":"U5mQKGDpnymBwQwRakyBqeYh"}}',
+  compressedWebUri:
+    'https://gs1.evrythng.com/HxHKVAdpQhCTxbrOF_yEFcx_4a2GeAh1mFOZkChg6Z8pgcEMEWpMganmIQ',
 };
 
+/**
+ * Create a DL using Setters
+ *
+ * @returns {{DL instance}}
+ */
 const createUsingSetters = () => {
   const dl = DigitalLink();
   dl.setDomain(DATA.domain);
@@ -39,28 +49,45 @@ const createUsingSetters = () => {
   return dl;
 };
 
-const createUsingObject = () => DigitalLink({
-  domain: DATA.domain,
-  identifier: { [DATA.identifier.key]: DATA.identifier.value },
-  keyQualifiers: {
-    [DATA.batchQualifier.key]: DATA.batchQualifier.value,
-    [DATA.serialQualifier.key]: DATA.serialQualifier.value,
-  },
-  attributes: {
-    [DATA.bestBeforeAttribute.key]: DATA.bestBeforeAttribute.value,
-    [DATA.customAttribute.key]: DATA.customAttribute.value,
-  },
-});
+/**
+ * Create a DL using Object
+ *
+ * @returns {{DL instance}}
+ */
+const createUsingObject = () =>
+  DigitalLink({
+    domain: DATA.domain,
+    identifier: { [DATA.identifier.key]: DATA.identifier.value },
+    keyQualifiers: {
+      [DATA.batchQualifier.key]: DATA.batchQualifier.value,
+      [DATA.serialQualifier.key]: DATA.serialQualifier.value,
+    },
+    attributes: {
+      [DATA.bestBeforeAttribute.key]: DATA.bestBeforeAttribute.value,
+      [DATA.customAttribute.key]: DATA.customAttribute.value,
+    },
+  });
 
+/**
+ * Create a DL using string
+ *
+ * @returns {{DL instance}}
+ */
 const createUsingString = () => DigitalLink(DATA.url);
 
-const createUsingChain = () => DigitalLink()
-  .setDomain(DATA.domain)
-  .setIdentifier(DATA.identifier.key, DATA.identifier.value)
-  .setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value)
-  .setKeyQualifier(DATA.batchQualifier.key, DATA.batchQualifier.value)
-  .setAttribute(DATA.bestBeforeAttribute.key, DATA.bestBeforeAttribute.value)
-  .setAttribute(DATA.customAttribute.key, DATA.customAttribute.value);
+/**
+ * Create a DL using Chain
+ *
+ * @returns {{DL instance}}
+ */
+const createUsingChain = () =>
+  DigitalLink()
+    .setDomain(DATA.domain)
+    .setIdentifier(DATA.identifier.key, DATA.identifier.value)
+    .setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value)
+    .setKeyQualifier(DATA.batchQualifier.key, DATA.batchQualifier.value)
+    .setAttribute(DATA.bestBeforeAttribute.key, DATA.bestBeforeAttribute.value)
+    .setAttribute(DATA.customAttribute.key, DATA.customAttribute.value);
 
 describe('Exports', () => {
   it('should export DigitalLink', () => {
@@ -70,7 +97,7 @@ describe('Exports', () => {
 
   it('should export Utils.Rules', () => {
     expect(Utils.Rules).to.be.an('object');
-    expect(Object.keys(Utils.Rules).length).to.equal(30);
+    expect(Object.keys(Utils.Rules).length).to.equal(29);
   });
 
   it('should export Utils.testRule', () => {
@@ -156,7 +183,9 @@ describe('DigitalLink', () => {
     });
 
     it('should create from string - domain + identifier + 2 key qualifiers + 2 attributes', () => {
-      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh');
+      const dl = DigitalLink(
+        'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh',
+      );
 
       expect(dl.getDomain()).to.equal(DATA.domain);
       expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
@@ -168,7 +197,8 @@ describe('DigitalLink', () => {
 
     it('should create from string - compressed URI', () => {
       const dl = DigitalLink(DATA.compressedWebUri);
-      const expected = 'https://gs1.evrythng.com/01/09780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh'
+      const expected =
+        'https://gs1.evrythng.com/01/09780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh';
 
       expect(dl.toWebUriString()).to.equal(expected);
     });
@@ -201,12 +231,14 @@ describe('DigitalLink', () => {
     });
 
     it('should throw for missing identifier (object)', () => {
-      const create = () => DigitalLink({
-        keyQualifiers: {
-          [DATA.batchQualifier.key]: DATA.batchQualifier.value,
-          [DATA.serialQualifier.key]: DATA.serialQualifier.value,
-        },
-      });
+      // eslint-disable-next-line require-jsdoc
+      const create = () =>
+        DigitalLink({
+          keyQualifiers: {
+            [DATA.batchQualifier.key]: DATA.batchQualifier.value,
+            [DATA.serialQualifier.key]: DATA.serialQualifier.value,
+          },
+        });
 
       expect(create).to.throw();
     });
@@ -267,7 +299,11 @@ describe('DigitalLink', () => {
   });
 
   describe('Setters', () => {
-    const dl = DigitalLink();
+    let dl;
+
+    beforeEach(function() {
+      dl = DigitalLink();
+    });
 
     it('should set the domain', () => {
       const input = 'https://gs1.evrythng.com';
@@ -294,21 +330,21 @@ describe('DigitalLink', () => {
 
     it('should set the key identifiers in the right order', () => {
       const values = {
-        'gtin':{
-          'ai':'01',
-          'value':'12345678'
+        gtin: {
+          ai: '01',
+          value: '12345678',
         },
-        'lot':{
-          'ai':'10',
-          'value':'211'
+        lot: {
+          ai: '10',
+          value: '211',
         },
-        'ser':{
-          'ai':'21',
-          'value':'2121'
+        ser: {
+          ai: '21',
+          value: '2121',
         },
-        'cpv':{
-          'ai':'22',
-          'value':'122113'
+        cpv: {
+          ai: '22',
+          value: '122113',
         },
       };
 
@@ -319,7 +355,6 @@ describe('DigitalLink', () => {
       dl.setKeyQualifier(values.ser.ai, values.ser.value);
 
       expect(dl.isValid()).to.equal(true);
-
     });
 
     it('should set an attribute', () => {
@@ -331,7 +366,7 @@ describe('DigitalLink', () => {
     });
 
     it('should throw for an invalid domain type', () => {
-      expect(() => dl.setDomain({ url: 'https://gs1.evrythng.com'})).to.throw();
+      expect(() => dl.setDomain({ url: 'https://gs1.evrythng.com' })).to.throw();
     });
 
     it('should throw for an invalid identifier type', () => {
@@ -343,7 +378,7 @@ describe('DigitalLink', () => {
     });
 
     it('should throw for an invalid attribute type', () => {
-      expect(() => dl.setAttribute({ 'thngId': 'U5mQKGDpnymBwQwRakyBqeYh' })).to.throw();
+      expect(() => dl.setAttribute({ thngId: 'U5mQKGDpnymBwQwRakyBqeYh' })).to.throw();
     });
   });
 
@@ -362,19 +397,20 @@ describe('DigitalLink', () => {
   });
 
   describe('Validation', () => {
-
     it('should validate using the grammar', () => {
       const dl = createUsingSetters();
       expect(dl.isValid()).to.equal(true);
     });
 
     it('should validate an URL with a custom path using the grammar', () => {
-      const dl = DigitalLink('https://example.com/my/custom/path/01/01234567890128/21/12345/10/4512');
-      console.log(dl.getDomain());
+      const dl = DigitalLink(
+        'https://example.com/my/custom/path/01/01234567890128/21/12345/10/4512',
+      );
+      /* console.log(dl.getDomain());
       console.log(dl.getIdentifier());
       console.log(dl.getKeyQualifiers());
       console.log(dl.toWebUriString());
-      console.log(dl.getValidationTrace());
+      console.log(dl.getValidationTrace()); */
       expect(dl.isValid()).to.equal(true);
     });
 
@@ -390,14 +426,22 @@ describe('DigitalLink', () => {
           { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
           { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
           { rule: 'hostname', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
-          { rule: 'customURIstem', match: 'https://gs1.evrythng.com', remainder: '/01/9780345418913' },
+          {
+            rule: 'customURIstem',
+            match: 'https://gs1.evrythng.com',
+            remainder: '/01/9780345418913',
+          },
           { rule: 'gtin-code', match: '01', remainder: '/9780345418913' },
           { rule: 'gtin-value', match: '9780345418913', remainder: '' },
           { rule: 'gtin-comp', match: '/01/9780345418913', remainder: '' },
           { rule: 'gtin-path', match: '/01/9780345418913', remainder: '' },
           { rule: 'gs1path', match: '/01/9780345418913', remainder: '' },
           { rule: 'uncompressedGS1webURIPattern', match: '/01/9780345418913', remainder: '' },
-          { rule: 'uncompressedCustomGS1webURI', match: 'https://gs1.evrythng.com/01/9780345418913', remainder: '' },
+          {
+            rule: 'uncompressedCustomGS1webURI',
+            match: 'https://gs1.evrythng.com/01/9780345418913',
+            remainder: '',
+          },
         ],
         success: true,
       };
@@ -413,21 +457,28 @@ describe('DigitalLink', () => {
           { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
           { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
           { rule: 'hostname', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
-          { rule: 'customURIstem', match: 'https://gs1.evrythng.com', remainder: '/01/9780345418913d' },
+          {
+            rule: 'customURIstem',
+            match: 'https://gs1.evrythng.com',
+            remainder: '/01/9780345418913d',
+          },
           { rule: 'gtin-code', match: '01', remainder: '/9780345418913d' },
           { rule: 'gtin-value', match: '9780345418913', remainder: 'd' },
           { rule: 'gtin-comp', match: '/01/9780345418913', remainder: 'd' },
           { rule: 'gtin-path', match: '/01/9780345418913', remainder: 'd' },
           { rule: 'gs1path', match: '/01/9780345418913', remainder: 'd' },
           { rule: 'uncompressedGS1webURIPattern', match: '/01/9780345418913', remainder: 'd' },
-          { rule: 'uncompressedCustomGS1webURI', match: 'https://gs1.evrythng.com/01/9780345418913', remainder: 'd' },
+          {
+            rule: 'uncompressedCustomGS1webURI',
+            match: 'https://gs1.evrythng.com/01/9780345418913',
+            remainder: 'd',
+          },
         ],
         success: false,
       };
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913d');
       expect(dl.getValidationTrace()).to.deep.equal(expected);
     });
-
   });
 });
 
@@ -521,40 +572,35 @@ describe('Utils', () => {
   });
 
   it('should find the identifier', () => {
-    const segments = ['some','01','path','01','12345678','21','4545646'];
+    const segments = ['some', '01', 'path', '01', '12345678', '21', '4545646'];
     expect(Utils.getIdentifierIndex(segments)).to.equal(3);
   });
-
-
-
 });
 
 describe('Grammar', () => {
   it('should recognize https and not http', () => {
     const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
-    expect(dl.getValidationTrace().trace[0].match).to.equal("https");
+    expect(dl.getValidationTrace().trace[0].match).to.equal('https');
   });
 
-  //I created this test to check if a single parameter can be recognized
-  //Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
+  // I created this test to check if a single parameter can be recognized
+  // Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
   it('should recognize notBeforeDelDateParameter', () => {
     const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913?4324=1234567891');
     let containTheParameter = false;
-    dl.getValidationTrace().trace.forEach((e)=>{
-      if (e.rule === "notBeforeDelDateParameter")
-        containTheParameter = true;
+    dl.getValidationTrace().trace.forEach(e => {
+      if (e.rule === 'notBeforeDelDateParameter') containTheParameter = true;
     });
     expect(containTheParameter).to.equal(true);
   });
 
-  //I created this test to check if a boolean paramter can be recognized
-  //Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
+  // I created this test to check if a boolean paramter can be recognized
+  // Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
   it('should recognize dangerousGoodsParameter', () => {
     const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913?4321=1');
     let containTheParameter = false;
-    dl.getValidationTrace().trace.forEach((e)=>{
-      if (e.rule === "dangerousGoodsParameter")
-        containTheParameter = true;
+    dl.getValidationTrace().trace.forEach(e => {
+      if (e.rule === 'dangerousGoodsParameter') containTheParameter = true;
     });
     expect(containTheParameter).to.equal(true);
   });
