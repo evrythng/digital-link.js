@@ -62,13 +62,14 @@ const decode = (dl, str) => {
     throw new Error('String input must contain http(s) protocol');
   }
 
-  if (str.split('/').length < 5 || str.split('/')[4].length === 0) {
-    throw new Error('Must contain at least the identifier');
-  }
-
   // http(s)://domain.xyz
   dl.domain = str.substring(0, str.indexOf('/', str.indexOf('://') + 3));
   str = str.substring(dl.domain.length);
+
+  // without this, https://example.com//01/01234567/ is considered as a valid DL
+  if (str.includes('//')) {
+    throw new Error("String can't contains // (except for 'http(s)://')");
+  }
 
   // /first/identifier
   const segments = (str.includes('?') ? str.substring(0, str.indexOf('?')) : str)
@@ -82,7 +83,7 @@ const decode = (dl, str) => {
   const indexIdentifier = getIdentifierIndex(segments);
 
   if (indexIdentifier === -1) {
-    endPath.push(...segments);
+    throw new Error('Must contain at least the identifier');
   } else {
     for (let i = 0; i < indexIdentifier; i += 1) {
       endPath.push(segments[i]);
@@ -99,7 +100,9 @@ const decode = (dl, str) => {
 
   // /x/y until query
   while (afterIdentifier.length) {
-    dl.keyQualifiers[afterIdentifier.shift()] = afterIdentifier.shift();
+    const key = afterIdentifier.shift();
+    dl.keyQualifiers[key] = afterIdentifier.shift();
+    dl.keyQualifiersOrder.push(key);
   }
 
   // ?x=y...
@@ -153,16 +156,23 @@ const encode = dl => {
 
   // Key qualifiers
   if (dl.keyQualifiers) {
-    const keyQualifiersWeight = getKeyQualifierWeights(idKey);
-
-    // The key qualifiers have to be added in a special order so I need to sort them and then add them to the string
-    Object.keys(dl.keyQualifiers)
-      .sort((a, b) => {
-        return keyQualifiersWeight[a] - keyQualifiersWeight[b];
-      })
-      .forEach(key => {
-        result += `/${key}/${dl.keyQualifiers[key]}`;
+    if (dl.sortKeyQualifiers) {
+      const keyQualifiersWeight = getKeyQualifierWeights(idKey);
+      // The key qualifiers have to be added in a special order so I need to sort them and then add them to the string
+      Object.keys(dl.keyQualifiers)
+        .sort((a, b) => {
+          return keyQualifiersWeight[a] - keyQualifiersWeight[b];
+        })
+        .forEach(key => {
+          result += `/${key}/${dl.keyQualifiers[key]}`;
+        });
+    } else {
+      Object.entries(dl.keyQualifiersOrder).forEach(entry => {
+        // eslint-disable-next-line no-unused-vars
+        const [index, value] = entry;
+        result += `/${value}/${dl.keyQualifiers[value]}`;
       });
+    }
   }
 
   // Data Attributes
@@ -214,6 +224,8 @@ const DigitalLink = input => {
       identifier: {},
       keyQualifiers: {},
       attributes: {},
+      sortKeyQualifiers: false,
+      keyQualifiersOrder: [],
     },
   };
 
@@ -228,6 +240,9 @@ const DigitalLink = input => {
     if (input.keyQualifiers) {
       assertPropertyType(input, 'keyQualifiers', 'object');
       result[model].keyQualifiers = input.keyQualifiers;
+      Object.keys(input.keyQualifiers).forEach(key => {
+        result[model].keyQualifiersOrder.push(key);
+      });
     }
 
     if (input.attributes) {
@@ -257,11 +272,21 @@ const DigitalLink = input => {
 
   result.setKeyQualifier = (key, value) => {
     assignStringPair(result[model], 'keyQualifiers', key, value);
+    result[model].keyQualifiersOrder.push(key);
     return result;
   };
 
   result.setAttribute = (key, value) => {
     assignStringPair(result[model], 'attributes', key, value);
+    return result;
+  };
+
+  result.setSortKeyQualifiers = value => {
+    if (typeof value !== 'boolean') {
+      throw new Error('SortKeyQualifiers must be a boolean');
+    }
+
+    result[model].sortKeyQualifiers = value;
     return result;
   };
 
@@ -271,6 +296,7 @@ const DigitalLink = input => {
   result.getKeyQualifiers = () => result[model].keyQualifiers;
   result.getAttribute = key => result[model].attributes[key];
   result.getAttributes = () => result[model].attributes;
+  result.getSortKeyQualifiers = () => result[model].sortKeyQualifiers;
 
   result.toWebUriString = () => encode(result[model]);
   result.toCompressedWebUriString = () => compressWebUri(result.toWebUriString());
