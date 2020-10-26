@@ -28,7 +28,7 @@ const DATA = {
   url:
     'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh',
   jsonString:
-    '{"domain":"https://gs1.evrythng.com","identifier":{"01":"9780345418913"},"keyQualifiers":{"10":"38737643","21":"58943"},"attributes":{"15":"230911","thngId":"U5mQKGDpnymBwQwRakyBqeYh"}}',
+    '{"domain":"https://gs1.evrythng.com","identifier":{"01":"9780345418913"},"keyQualifiers":{"10":"38737643","21":"58943"},"attributes":{"15":"230911","thngId":"U5mQKGDpnymBwQwRakyBqeYh"},"sortKeyQualifiers":false,"keyQualifiersOrder":["10","21"]}',
   compressedWebUri:
     'https://gs1.evrythng.com/HxHKVAdpQhCTxbrOF_yEFcx_4a2GeAh1mFOZkChg6Z8pgcEMEWpMganmIQ',
 };
@@ -42,8 +42,8 @@ const createUsingSetters = () => {
   const dl = DigitalLink();
   dl.setDomain(DATA.domain);
   dl.setIdentifier(DATA.identifier.key, DATA.identifier.value);
-  dl.setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value);
   dl.setKeyQualifier(DATA.batchQualifier.key, DATA.batchQualifier.value);
+  dl.setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value);
   dl.setAttribute(DATA.bestBeforeAttribute.key, DATA.bestBeforeAttribute.value);
   dl.setAttribute(DATA.customAttribute.key, DATA.customAttribute.value);
   return dl;
@@ -84,8 +84,8 @@ const createUsingChain = () =>
   DigitalLink()
     .setDomain(DATA.domain)
     .setIdentifier(DATA.identifier.key, DATA.identifier.value)
-    .setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value)
     .setKeyQualifier(DATA.batchQualifier.key, DATA.batchQualifier.value)
+    .setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value)
     .setAttribute(DATA.bestBeforeAttribute.key, DATA.bestBeforeAttribute.value)
     .setAttribute(DATA.customAttribute.key, DATA.customAttribute.value);
 
@@ -301,7 +301,7 @@ describe('DigitalLink', () => {
   describe('Setters', () => {
     let dl;
 
-    beforeEach(function() {
+    beforeEach(() => {
       dl = DigitalLink();
     });
 
@@ -326,6 +326,35 @@ describe('DigitalLink', () => {
 
       expect(() => dl.setKeyQualifier(ai, value)).to.not.throw();
       expect(dl.getKeyQualifier(ai)).to.equal(value);
+    });
+
+    it('should not set the key identifiers in the right order', () => {
+      const values = {
+        gtin: {
+          ai: '01',
+          value: '12345678',
+        },
+        lot: {
+          ai: '10',
+          value: '211',
+        },
+        ser: {
+          ai: '21',
+          value: '2121',
+        },
+        cpv: {
+          ai: '22',
+          value: '122113',
+        },
+      };
+
+      dl.setDomain('https://gs1.evrythng.com');
+      dl.setIdentifier(values.gtin.ai, values.gtin.value);
+      dl.setKeyQualifier(values.lot.ai, values.lot.value);
+      dl.setKeyQualifier(values.cpv.ai, values.cpv.value);
+      dl.setKeyQualifier(values.ser.ai, values.ser.value);
+
+      expect(dl.isValid()).to.equal(false);
     });
 
     it('should set the key identifiers in the right order', () => {
@@ -353,6 +382,7 @@ describe('DigitalLink', () => {
       dl.setKeyQualifier(values.lot.ai, values.lot.value);
       dl.setKeyQualifier(values.cpv.ai, values.cpv.value);
       dl.setKeyQualifier(values.ser.ai, values.ser.value);
+      dl.setSortKeyQualifiers(true);
 
       expect(dl.isValid()).to.equal(true);
     });
@@ -476,6 +506,46 @@ describe('DigitalLink', () => {
       };
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913d');
       expect(dl.getValidationTrace()).to.deep.equal(expected);
+    });
+
+    describe('Try multiple case to test the validation', () => {
+      it('common test', () => {
+        const dl = DigitalLink('https://example.com/01/01234567/');
+        expect(dl.isValid()).to.equal(true);
+      });
+
+      it('common test with key qualifiers', () => {
+        const dl = DigitalLink('https://example.com/01/01234567/10/12345/21/4512');
+        expect(dl.isValid()).to.equal(true);
+      });
+
+      it('should not validate since the key qualifiers are not in the right order', () => {
+        const dl = DigitalLink('https://example.com/01/01234567/21/12345/10/4512');
+        expect(dl.isValid()).to.equal(false);
+      });
+
+      it('should validate since the key qualifiers are not in the right order but I asked to sort it', () => {
+        const dl = DigitalLink('https://example.com/01/01234567/21/12345/10/4512');
+        dl.setSortKeyQualifiers(true);
+        expect(dl.isValid()).to.equal(true);
+      });
+
+      it("should throw an error since there isn't any identifier", () => {
+        expect(() => {
+          DigitalLink('https://example.com/custom/path/');
+        }).to.throw();
+      });
+
+      it("should throw an error since there is an extra '/'", () => {
+        expect(() => {
+          DigitalLink('https://example.com/01//12345678/');
+        }).to.throw();
+      });
+
+      it('should not validate since the key qualifier is not matching the identifier', () => {
+        const dl = DigitalLink('https://example.com/00/123456789123456789/10/4512');
+        expect(dl.isValid()).to.equal(false);
+      });
     });
   });
 });
