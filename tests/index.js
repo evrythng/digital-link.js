@@ -17,6 +17,7 @@ const DATA = {
     key: '10',
     value: '38737643',
   },
+  keyQualifiersOrder: ['10', '21'],
   bestBeforeAttribute: {
     key: '15',
     value: '230911',
@@ -44,6 +45,7 @@ const createUsingSetters = () => {
   dl.setIdentifier(DATA.identifier.key, DATA.identifier.value);
   dl.setKeyQualifier(DATA.batchQualifier.key, DATA.batchQualifier.value);
   dl.setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value);
+  dl.setKeyQualifiersOrder(DATA.keyQualifiersOrder);
   dl.setAttribute(DATA.bestBeforeAttribute.key, DATA.bestBeforeAttribute.value);
   dl.setAttribute(DATA.customAttribute.key, DATA.customAttribute.value);
   return dl;
@@ -62,6 +64,7 @@ const createUsingObject = () =>
       [DATA.batchQualifier.key]: DATA.batchQualifier.value,
       [DATA.serialQualifier.key]: DATA.serialQualifier.value,
     },
+    keyQualifiersOrder: DATA.keyQualifiersOrder,
     attributes: {
       [DATA.bestBeforeAttribute.key]: DATA.bestBeforeAttribute.value,
       [DATA.customAttribute.key]: DATA.customAttribute.value,
@@ -86,6 +89,7 @@ const createUsingChain = () =>
     .setIdentifier(DATA.identifier.key, DATA.identifier.value)
     .setKeyQualifier(DATA.batchQualifier.key, DATA.batchQualifier.value)
     .setKeyQualifier(DATA.serialQualifier.key, DATA.serialQualifier.value)
+    .setKeyQualifiersOrder(DATA.keyQualifiersOrder)
     .setAttribute(DATA.bestBeforeAttribute.key, DATA.bestBeforeAttribute.value)
     .setAttribute(DATA.customAttribute.key, DATA.customAttribute.value);
 
@@ -97,7 +101,7 @@ describe('Exports', () => {
 
   it('should export Utils.Rules', () => {
     expect(Utils.Rules).to.be.an('object');
-    expect(Object.keys(Utils.Rules).length).to.equal(29);
+    expect(Object.keys(Utils.Rules).length).to.equal(30);
   });
 
   it('should export Utils.testRule', () => {
@@ -563,6 +567,15 @@ describe('Compression', () => {
     const expected = 'https://dlnkd.tn.gg/01/09780345418913/10/231/21/345345?15=120820';
 
     expect(Utils.decompressWebUri(input)).to.equal(expected);
+  });
+
+  it('should compress and decompress a Digital Link URI with a custom path', () => {
+    const input = 'https://dlnkd.tn.gg/path/01/09780345418913/10/231/21/345345?15=120820';
+    const compress = Utils.compressWebUri(input);
+    // console.log(compress);
+    const uncompress = Utils.decompressWebUri(compress);
+    // console.log(uncompress);
+    expect(input).to.equal(uncompress);
   });
 
   it('should decompress a compressed Digital Link URI using short AI names', () => {
