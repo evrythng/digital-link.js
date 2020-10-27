@@ -246,6 +246,30 @@ const generateResultsHtml = inputStr => {
   return apglib.utils.parserResultToHtml(result);
 };
 
+/**
+ * if the domain has a custom path (ex : https://example.com/path/) it returns the domain without the custom path
+ * (ex : https://example.com/)
+ * Otherwise, it returns the parameter
+ *
+ * @param {string} webUriString - The Web URI string (you can get it with dl.toWebUriString())
+ * @param {string} domain - The domain of the DL (ex : https://example.com/path/)
+ */
+const removeCustomPath = (webUriString, domain) => {
+  const domainWithoutProtocol = domain.replace('https://', '').replace('http://', '');
+
+  const splitDomain = domainWithoutProtocol.split('/');
+
+  if (splitDomain.length > 1) {
+    // It has a custom path
+    splitDomain.shift(); // [ 'my', 'custom', 'path' ]
+    const customPath = `/${splitDomain.join('/')}`; // /my/custom/path
+    return webUriString.replace(customPath, '');
+  }
+
+  // It doesn't have a custom path
+  return webUriString;
+};
+
 module.exports = {
   addQueryParams,
   assertPropertyType,
@@ -258,4 +282,5 @@ module.exports = {
   generateTraceHtml,
   generateResultsHtml,
   getIdentifierIndex,
+  removeCustomPath,
 };

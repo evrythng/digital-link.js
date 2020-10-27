@@ -13,6 +13,7 @@ const {
   generateTraceHtml,
   generateResultsHtml,
   getIdentifierIndex,
+  removeCustomPath,
 } = require('./util');
 const { compressWebUri, decompressWebUri, isCompressedWebUri } = require('./compression');
 
@@ -29,6 +30,7 @@ const Rules = {
   purchasedFrom: 'purchasedFrom-value',
   shipFor: 'shipFor-value',
   gln: 'gln-value',
+  partyGln: 'partyGln-value',
   payTo: 'payTo-value',
   glnProd: 'glnProd-value',
   gsrnp: 'gsrnp-value',
@@ -68,7 +70,7 @@ const decode = (dl, str) => {
 
   // without this, https://example.com//01/01234567/ is considered as a valid DL
   if (str.includes('//')) {
-    throw new Error("String can't contains // (except for 'http(s)://')");
+    throw new Error("String can't contains '//' (except for 'http(s)://')");
   }
 
   // /first/identifier
@@ -166,11 +168,17 @@ const encode = dl => {
         .forEach(key => {
           result += `/${key}/${dl.keyQualifiers[key]}`;
         });
-    } else {
+    } else if (dl.keyQualifiersOrder.length === Object.keys(dl.keyQualifiers).length) {
+      // I need to add the key qualifiers in a special order
       Object.entries(dl.keyQualifiersOrder).forEach(entry => {
         // eslint-disable-next-line no-unused-vars
         const [index, value] = entry;
         result += `/${value}/${dl.keyQualifiers[value]}`;
+      });
+    } else {
+      // I don't need to add the key qualifiers in a special order
+      Object.keys(dl.keyQualifiers).forEach(key => {
+        result += `/${key}/${dl.keyQualifiers[key]}`;
       });
     }
   }
@@ -185,26 +193,15 @@ const encode = dl => {
 
 /**
  *
- * @param {string} webUriString - the webUriString of the DL that has to be validated
- * @param {string} domain - the domain of the DL that has to be validated
+ * @param {string} webUriString - the webUriString of the DL that has to be validated (If it has a custom path, remove
+ * it before calling this function)
  * @returns {boolean} if the DL is valid or not
  */
-const isValid = (webUriString, domain) => {
+const isValid = webUriString => {
   // If my DL is something like this : https://example.com/my/custom/path/01/01234567890128/21/12345/10/4512
   // I need to send this to the validateURL function : https://example.com/01/01234567890128/21/12345/10/4512
   // Otherwise, the DL will never be validated since the custom path (/my/custom/path) is not handled by the grammar file.
-  const domainWithoutProtocol = domain.replace('https://', '').replace('http://', '');
-
-  const splitDomain = domainWithoutProtocol.split('/');
-
-  if (splitDomain.length > 1) {
-    // It has a custom path
-    splitDomain.shift(); // [ 'my', 'custom', 'path' ]
-    const customPath = `/${splitDomain.join('/')}`; // /my/custom/path
-    return validateUrl(webUriString.replace(customPath, ''));
-  }
-
-  // It doesn't have a custom path
+  // That why you need to call removeCustomPath() before calling this function
   return validateUrl(webUriString);
 };
 
@@ -249,6 +246,18 @@ const DigitalLink = input => {
       assertPropertyType(input, 'attributes', 'object');
       result[model].attributes = input.attributes;
     }
+
+    if (input.sortKeyQualifiers) {
+      assertPropertyType(input, 'sortKeyQualifiers', 'boolean');
+      result[model].sortKeyQualifiers = input.sortKeyQualifiers;
+    }
+
+    if (input.keyQualifiersOrder) {
+      if (!Array.isArray(input.keyQualifiersOrder))
+        throw new Error('KeyQualifiersOrder must be an array');
+
+      result[model].keyQualifiersOrder = input.keyQualifiersOrder;
+    }
   }
 
   if (typeof input === 'string') {
@@ -290,6 +299,13 @@ const DigitalLink = input => {
     return result;
   };
 
+  result.setKeyQualifiersOrder = value => {
+    if (!Array.isArray(value)) throw new Error('KeyQualifiersOrder must be an array');
+
+    result[model].keyQualifiersOrder = value;
+    return result;
+  };
+
   result.getDomain = () => result[model].domain;
   result.getIdentifier = () => result[model].identifier;
   result.getKeyQualifier = key => result[model].keyQualifiers[key];
@@ -297,12 +313,14 @@ const DigitalLink = input => {
   result.getAttribute = key => result[model].attributes[key];
   result.getAttributes = () => result[model].attributes;
   result.getSortKeyQualifiers = () => result[model].sortKeyQualifiers;
+  result.getKeyQualifiersOrder = () => result[model].keyQualifiersOrder;
 
   result.toWebUriString = () => encode(result[model]);
   result.toCompressedWebUriString = () => compressWebUri(result.toWebUriString());
   result.toJsonString = () => JSON.stringify(result[model]);
-  result.isValid = () => isValid(result.toWebUriString(), result.getDomain());
-  result.getValidationTrace = () => getTrace(result.toWebUriString());
+  result.isValid = () => isValid(removeCustomPath(result.toWebUriString(), result.getDomain()));
+  result.getValidationTrace = () =>
+    getTrace(removeCustomPath(result.toWebUriString(), result.getDomain()));
 
   return result;
 };
@@ -335,5 +353,6 @@ module.exports = {
     decompressWebUri,
     isCompressedWebUri,
     getIdentifierIndex,
+    removeCustomPath,
   },
 };
