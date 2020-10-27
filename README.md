@@ -64,6 +64,15 @@ The object can contain the following items:
   as key-value pairs.
 - `attributes` (object) - As for `keyQualifiers`, but containing GS1 Data
   Attributes and custom data attributes.
+- `sortKeyQualifiers` (boolean) - false by default. If you set it to true, the 
+key qualifiers will be sorted in the Web Uri String to match the order defined 
+by the GS1 Digital Link Grammar.
+- `keyQualifiersOrder` (Array) - It's an array that contains all the keys of the 
+key qualifiers. If the length of the array is not equal to the length of the
+`keyQualifiers` field, this array will be ignored. In this case, the order of the
+key qualifier in the Web Uri String will be the order of the map.
+Otherwise (if the length of the two fields are equal), the order of the key 
+qualifier in the Web Uri String will be the order define in this field.
 
 An example is shown below:
 
@@ -189,7 +198,9 @@ The example above contains an erroneous 'x' at the end, so it does not validate:
   "success": false
 }
 ```
-
+> Warning : if your domain contains a custom path (for example : `https://example.com/custom/path/01/12345678`), 
+> It will be remove (`https://example.com/01/12345678`) in the validation trace. That's because the
+> Digital Link Grammar file doesn't support the custom path.
 
 ### Compression
 
@@ -299,6 +310,12 @@ statsSpan.innerHTML = Utils.generateStatsHtml(dl.toUrlString());
 // See all the parser results for a given DigitalLink URL
 resultsSpan.innerHTML = Utils.generateResultsHtml(dl.toUrlString());
 ```
+
+> Warning : if your domain contains a custom path (for example : `https://example.com/custom/path/01/12345678`), 
+> We recommand you to remove it (`https://example.com/01/12345678`) by calling `Utils.removeCustomPath()` for the 
+> `generateTraceHtml`, `generateStatsHtml` and `generateResultsHtml` functions. Since the Digital Link Grammar 
+> file doesn't support the custom path. Otherwise, all your fields (identifier, key qualifiers, ...) won't be
+> recognized.
 
 ### ABNF Grammar
 
