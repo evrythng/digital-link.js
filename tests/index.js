@@ -569,11 +569,16 @@ describe('Compression', () => {
     expect(Utils.decompressWebUri(input)).to.equal(expected);
   });
 
-  it('should compress and decompress a Digital Link URI with a custom path', () => {
+  it('should compress a Digital Link URI with a custom path', () => {
     const input = 'https://example.com/some/other/path/info/01/09780345418913/21/12345';
-    const compress = Utils.compressWebUri(input);
-    const uncompress = Utils.decompressWebUri(compress);
-    expect(input).to.equal(uncompress);
+    const expected = 'https://example.com/some/other/path/info/DBHKVAdpQgowOQ';
+    expect(Utils.compressWebUri(input)).to.equal(expected);
+  });
+
+  it('should decompress a compressed Digital Link URI with a custom path', () => {
+    const input = 'https://example.com/some/other/path/info/DBHKVAdpQgowOQ';
+    const expected = 'https://example.com/some/other/path/info/01/09780345418913/21/12345';
+    expect(Utils.decompressWebUri(input)).to.equal(expected);
   });
 
   it('should decompress a compressed Digital Link URI using short AI names', () => {
