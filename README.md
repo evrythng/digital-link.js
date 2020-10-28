@@ -96,7 +96,7 @@ const dl = DigitalLink({
   },
 });
 ```
-Alternatively, you can add the line above to replace the `keyQualifiersOrder`. This will sort them automatically.
+Alternatively, you can add the line below to replace the `keyQualifiersOrder`. This will sort them automatically.
 
 ```js
 sortKeyQualifiers: true
