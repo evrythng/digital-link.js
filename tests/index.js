@@ -332,7 +332,7 @@ describe('DigitalLink', () => {
       expect(dl.getKeyQualifier(ai)).to.equal(value);
     });
 
-    it('should not set the key identifiers in the right order', () => {
+    it('should not validate setting the key qualifiers in the wrong order', () => {
       const values = {
         gtin: {
           ai: '01',
@@ -436,12 +436,12 @@ describe('DigitalLink', () => {
       expect(dl.isValid()).to.equal(true);
     });
 
-    it('should validate an URL with a custom path using the grammar', () => {
+    it('should validate a URL with a custom path using the grammar', () => {
       const dl = DigitalLink('https://example.com/some/other/path/info/01/01234567890128/21/12345');
       expect(dl.isValid()).to.equal(true);
     });
 
-    it('should not validate an URL with a custom path using the grammar', () => {
+    it('should not validate an URL with a custom path (but with a wrong identifier) using the grammar', () => {
       const dl = DigitalLink('https://example.com/my/custom/path/01/0123456789d/21/12345/10/4512');
       expect(dl.isValid()).to.equal(false);
     });
@@ -512,13 +512,13 @@ describe('DigitalLink', () => {
       expect(dl.getValidationTrace()).to.deep.equal(expected);
     });
 
-    describe('Try multiple case to test the validation', () => {
-      it('common test', () => {
+    describe('Some example test cases', () => {
+      it('should allow a GTIN only', () => {
         const dl = DigitalLink('https://example.com/01/01234567/');
         expect(dl.isValid()).to.equal(true);
       });
 
-      it('common test with key qualifiers', () => {
+      it('should allow a GTIN with two key qualifiers', () => {
         const dl = DigitalLink('https://example.com/01/01234567/10/12345/21/4512');
         expect(dl.isValid()).to.equal(true);
       });
@@ -528,7 +528,7 @@ describe('DigitalLink', () => {
         expect(dl.isValid()).to.equal(false);
       });
 
-      it('should validate since the key qualifiers are not in the right order but I asked to sort it', () => {
+      it('Should validate when key qualifiers are not in the right order, but were sorted', () => {
         const dl = DigitalLink('https://example.com/01/01234567/21/12345/10/4512');
         dl.setSortKeyQualifiers(true);
         expect(dl.isValid()).to.equal(true);
@@ -570,11 +570,9 @@ describe('Compression', () => {
   });
 
   it('should compress and decompress a Digital Link URI with a custom path', () => {
-    const input = 'https://dlnkd.tn.gg/path/01/09780345418913/10/231/21/345345?15=120820';
+    const input = 'https://example.com/some/other/path/info/01/09780345418913/21/12345';
     const compress = Utils.compressWebUri(input);
-    // console.log(compress);
     const uncompress = Utils.decompressWebUri(compress);
-    // console.log(uncompress);
     expect(input).to.equal(uncompress);
   });
 
@@ -652,9 +650,9 @@ describe('Utils', () => {
     expect(res).to.include(sample);
   });
 
-  it('should find the identifier', () => {
+  it('Should find the correct identifier key index', () => {
     const segments = ['some', '01', 'path', '01', '12345678', '21', '4545646'];
-    expect(Utils.getIdentifierIndex(segments)).to.equal(3);
+    expect(Utils.getIdentifierCodeIndex(segments)).to.equal(3);
   });
 });
 

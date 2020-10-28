@@ -74,21 +74,21 @@ const validateRule = (rule, inputStr) => {
 };
 
 /**
+ * Returns the index of the identifier code in the segment list passed as a parameter
+ * If the url is https://example.com/some/01/other/path/info/01/01234567890128/21/12345?example=true
+ * segment will be [some,01,other,path,info,01,01234567890128,21,12345]
+ * And it will return 5. (the second '01' is the identifier code)
  *
  * @param {Array<string>} segments - The list of the url path element
- * if the url is https://example.com/some/01/other/path/info/01/01234567890128/21/12345?example=true
- * segment will be [some,01,other,path,info,01,01234567890128,21,12345]
- * And it will return 5. (the second '01' is the indentifier)
  * @returns {int} the position of the indentifier in the array (-1 if it there is not any identifier).
  */
-const getIdentifierIndex = segments => {
+const getIdentifierCodeIndex = segments => {
   // I'm going through the array to find the identifier
   // I'm starting the loop at the end of the array because if I have this link for example :
   // https://example.com/some/01/other/path/info/01/01234567890128/21/12345
   // The identifier should be the last 01, and not the first one
   for (let i = segments.length - 1; i >= 1; i -= 2) {
     const code = segments[i - 1];
-    // const value = segments_copy[i];
     let isIdentifier = false;
 
     for (let j = 0; j < identifiersCodes.length; j += 1) {
@@ -252,10 +252,12 @@ const generateResultsHtml = inputStr => {
  * Otherwise, it returns the parameter
  *
  * @param {string} webUriString - The Web URI string (you can get it with dl.toWebUriString())
- * @param {string} domain - The domain of the DL (ex : https://example.com/path/)
+ * @param {string} domain - The domain of the Digital Link (ex : https://example.com/with/custom/path/ or
+ * https://example.com/)
  */
 const removeCustomPath = (webUriString, domain) => {
-  const domainWithoutProtocol = domain.replace('https://', '').replace('http://', '');
+  // I remove 'https://' or 'http://'
+  const [, domainWithoutProtocol] = domain.split('//');
 
   const splitDomain = domainWithoutProtocol.split('/');
 
@@ -281,6 +283,6 @@ module.exports = {
   generateStatsHtml,
   generateTraceHtml,
   generateResultsHtml,
-  getIdentifierIndex,
+  getIdentifierCodeIndex,
   removeCustomPath,
 };

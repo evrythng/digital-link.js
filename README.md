@@ -82,17 +82,25 @@ const { DigitalLink } = require('digital-link.js');
 const dl = DigitalLink({
   domain: 'https://dlnkd.tn.gg',
   identifier: {
-    '01': '9780345418913',
+    '01': '00860080001300',
   },
   keyQualifiers: {
     '21': '43786',
+    '10': '12345'
   },
+  keyQualifiersOrder: [
+    '10','21'
+  ],
   attributes: {
     thngId: 'UMwxDXBdUbxgtyRaR2HBrc4r',
   },
 });
 ```
+Alternatively, you can add the line above to replace the `keyQualifiersOrder`. This will sort them automatically.
 
+```js
+sortKeyQualifiers: true
+```
 
 ### Create with setters
 
@@ -104,8 +112,10 @@ const { DigitalLink } = require('digital-link.js');
 
 const dl = DigitalLink();
 dl.setDomain('https://dlnkd.tn.gg');
-dl.setIdentifier('01', '9780345418913');
+dl.setIdentifier('01', '00860080001300');
 dl.setKeyQualifier('21', '43786');
+dl.setKeyQualifier('10', '12345');
+dl.setKeyQualifiersOrder(['10', '21']);
 dl.setAttribute('thngId', 'UMwxDXBdUbxgtyRaR2HBrc4r');
 ```
 
@@ -116,8 +126,10 @@ const { DigitalLink } = require('digital-link.js');
 
 const dl = DigitalLink()
   .setDomain('https://dlnkd.tn.gg')
-  .setIdentifier('01', '9780345418913')
+  .setIdentifier('01', '00860080001300')
   .setKeyQualifier('21', '43786')
+  .setKeyQualifier('10', '12345')
+  .setKeyQualifiersOrder(['10', '21'])
   .setAttribute('thngId', 'UMwxDXBdUbxgtyRaR2HBrc4r');
 ```
 
@@ -127,7 +139,7 @@ const dl = DigitalLink()
 A `DigitalLink` object can also be created using an existing string:
 
 ```js
-const uri = 'https://dlnkd.tn.gg/01/9780345418913/21/43786';
+const uri = 'https://dlnkd.tn.gg/01/00860080001300/10/12345/21/43786';
 
 const dl = DigitalLink(uri);
 ```
@@ -198,9 +210,9 @@ The example above contains an erroneous 'x' at the end, so it does not validate:
   "success": false
 }
 ```
-> Warning : if your domain contains a custom path (for example : `https://example.com/custom/path/01/12345678`), 
-> It will be remove (`https://example.com/01/12345678`) in the validation trace. That's because the
-> Digital Link Grammar file doesn't support the custom path.
+> Warning : if your domain contains a custom path (for example : `https://example.com/custom/path/01/00860080001300`), 
+> It will be removed (`https://example.com/01/00860080001300`) in the validation trace. That's because the
+> Digital Link Grammar file doesn't support the custom paths.
 
 ### Compression
 
@@ -213,7 +225,7 @@ very limited.
 To create a compressed URI, use the `toCompressedWebUriString()` method:
 
 ```js
-const uri = 'https://dlnkd.tn.gg/01/9780345418913/21/43786';
+const uri = 'https://dlnkd.tn.gg/01/00860080001300/21/43786';
 const dl = DigitalLink(uri);
 
 const compressedUri = dl.toCompressedWebUriString();
@@ -236,7 +248,7 @@ decompression of URI strings:
 ```js
 const { Utils } = require('digital-link.js');
 
-const uri = 'https://dlnkd.tn.gg/01/9780345418913/21/43786';
+const uri = 'https://dlnkd.tn.gg/01/00860080001300/21/43786';
 
 // Compress a URI
 const compressedUri = Utils.compressWebUri(uri);
@@ -287,7 +299,7 @@ For example, validating a GTIN by itself:
 const { Utils } = require('digital-link.js');
 
 // Validate a GTIN
-const gtin = '438948397';
+const gtin = '00860080001300';
 const rule = Utils.Rules.gtin;
 
 console.log(`Is the GTIN ${gtin} valid? ${Util.testRule(rule, gtin)}`);
@@ -299,7 +311,7 @@ parser run against the input:
 ```js
 const { DigitalLink, Utils } = require('digital-link.js');
 
-const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+const dl = DigitalLink('https://gs1.evrythng.com/01/00860080001300');
 
 // See all the parser trace steps for a given DigitalLink URL
 traceSpan.innerHTML = Utils.generateTraceHtml(dl.toUrlString());
@@ -311,8 +323,8 @@ statsSpan.innerHTML = Utils.generateStatsHtml(dl.toUrlString());
 resultsSpan.innerHTML = Utils.generateResultsHtml(dl.toUrlString());
 ```
 
-> Warning : if your domain contains a custom path (for example : `https://example.com/custom/path/01/12345678`), 
-> We recommand you to remove it (`https://example.com/01/12345678`) by calling `Utils.removeCustomPath()` for the 
+> Warning : if your domain contains a custom path (for example : `https://example.com/custom/path/01/00860080001300`), 
+> We recommand you to remove it (`https://example.com/01/00860080001300`) by calling `Utils.removeCustomPath()` for the 
 > `generateTraceHtml`, `generateStatsHtml` and `generateResultsHtml` functions. Since the Digital Link Grammar 
 > file doesn't support the custom path. Otherwise, all your fields (identifier, key qualifiers, ...) won't be
 > recognized.

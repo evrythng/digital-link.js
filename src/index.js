@@ -12,7 +12,7 @@ const {
   generateStatsHtml,
   generateTraceHtml,
   generateResultsHtml,
-  getIdentifierIndex,
+  getIdentifierCodeIndex,
   removeCustomPath,
 } = require('./util');
 const { compressWebUri, decompressWebUri, isCompressedWebUri } = require('./compression');
@@ -68,7 +68,7 @@ const decode = (dl, str) => {
   dl.domain = str.substring(0, str.indexOf('/', str.indexOf('://') + 3));
   str = str.substring(dl.domain.length);
 
-  // without this, https://example.com//01/01234567/ is considered as a valid DL
+  // without this, https://example.com//01/01234567/ is considered as a valid Digital Link
   if (str.includes('//')) {
     throw new Error("String can't contains '//' (except for 'http(s)://')");
   }
@@ -79,31 +79,37 @@ const decode = (dl, str) => {
     .filter(p => p.length);
 
   // let's find the identifier to know where the domain stops and where are the keyQualifiers
-
-  const endPath = [];
-  const afterIdentifier = [];
-  const indexIdentifier = getIdentifierIndex(segments);
+  const endPathSegments = [];
+  const segmentsAfterIdentifier = [];
+  const indexIdentifier = getIdentifierCodeIndex(segments);
 
   if (indexIdentifier === -1) {
     throw new Error('Must contain at least the identifier');
-  } else {
-    for (let i = 0; i < indexIdentifier; i += 1) {
-      endPath.push(segments[i]);
-    }
-
-    dl.identifier[segments[indexIdentifier]] = segments[indexIdentifier + 1];
-
-    for (let i = indexIdentifier + 2; i < segments.length; i += 1) {
-      afterIdentifier.push(segments[i]);
-    }
   }
 
-  if (endPath.length) dl.domain = `${dl.domain}/${endPath.join('/')}`;
+  // I retrieve all the optional path segments. For example, for the string
+  // https://example.com/some/other/path/info/01/01234567890128/21/12345, it would be  ['some','other','path','info']
+  for (let i = 0; i < indexIdentifier; i += 1) {
+    endPathSegments.push(segments[i]);
+  }
+
+  // I retrieve the identifier and save it.
+  dl.identifier[segments[indexIdentifier]] = segments[indexIdentifier + 1];
+
+  // I retrieve all the segments that are after the identifier. For example, for the string
+  // https://example.com/some/other/path/info/01/01234567890128/21/12345, it would be  ['21','12345']
+  for (let i = indexIdentifier + 2; i < segments.length; i += 1) {
+    segmentsAfterIdentifier.push(segments[i]);
+  }
+
+  // I add ['some','other','path','info'] to the domain so that the domain become
+  // https://example.com/some/other/path/info
+  if (endPathSegments.length) dl.domain = `${dl.domain}/${endPathSegments.join('/')}`;
 
   // /x/y until query
-  while (afterIdentifier.length) {
-    const key = afterIdentifier.shift();
-    dl.keyQualifiers[key] = afterIdentifier.shift();
+  while (segmentsAfterIdentifier.length) {
+    const key = segmentsAfterIdentifier.shift();
+    dl.keyQualifiers[key] = segmentsAfterIdentifier.shift();
     dl.keyQualifiersOrder.push(key);
   }
 
@@ -120,7 +126,7 @@ const decode = (dl, str) => {
 };
 
 /**
- * Extract from idenfier-list.json the list of key Qualifiers and their 'weight' according to their order.
+ * Extract from identifier-list.json the list of key Qualifiers and their 'weight' according to their order.
  *
  * @param {string} identifierCode - The identifier of the digital link
  * @returns {Map} A map that contains all the possible key qualifiers and their weights. Example : { '10': 1, '21': 0, '22': 2, cpv: 0, lot: 1, ser: 2 }
@@ -128,18 +134,21 @@ const decode = (dl, str) => {
 const getKeyQualifierWeights = identifierCode => {
   try {
     const identifier = IDENTIFIER_LIST.find(item => item.code === identifierCode);
-
     const keyQualifiersWeight = new Map();
 
-    for (let i = 0; i < identifier.keyQualifiers.length; i += 1)
+    for (let i = 0; i < identifier.keyQualifiers.length; i += 1) {
       keyQualifiersWeight[identifier.keyQualifiers[i]] = i;
+    }
 
-    for (let i = 0; i < identifier.keyQualifiersName.length; i += 1)
+    for (let i = 0; i < identifier.keyQualifiersName.length; i += 1) {
       keyQualifiersWeight[identifier.keyQualifiersName[i]] = i;
+    }
 
     return keyQualifiersWeight;
   } catch (e) {
-    return {};
+    throw new Error(
+      `The identifier provided (${identifierCode}) isn't defined in the identifier-list.json!`,
+    );
   }
 };
 
@@ -159,20 +168,17 @@ const encode = dl => {
   // Key qualifiers
   if (dl.keyQualifiers) {
     if (dl.sortKeyQualifiers) {
-      const keyQualifiersWeight = getKeyQualifierWeights(idKey);
+      const keyQualifierWeights = getKeyQualifierWeights(idKey);
       // The key qualifiers have to be added in a special order so I need to sort them and then add them to the string
       Object.keys(dl.keyQualifiers)
-        .sort((a, b) => {
-          return keyQualifiersWeight[a] - keyQualifiersWeight[b];
-        })
+        .sort((a, b) => keyQualifierWeights[a] - keyQualifierWeights[b])
         .forEach(key => {
           result += `/${key}/${dl.keyQualifiers[key]}`;
         });
     } else if (dl.keyQualifiersOrder.length === Object.keys(dl.keyQualifiers).length) {
       // I need to add the key qualifiers in a special order
       Object.entries(dl.keyQualifiersOrder).forEach(entry => {
-        // eslint-disable-next-line no-unused-vars
-        const [index, value] = entry;
+        const [, value] = entry;
         result += `/${value}/${dl.keyQualifiers[value]}`;
       });
     } else {
@@ -192,18 +198,16 @@ const encode = dl => {
 };
 
 /**
+ * If my Digital Link is something like this : https://example.com/my/custom/path/01/01234567890128/21/12345/10/4512
+ * I need to send this to the validateURL function : https://example.com/01/01234567890128/21/12345/10/4512
+ * Otherwise, the Digital Link will never be validated since the custom path (/my/custom/path) is not handled by the grammar file.
+ * That why you need to call removeCustomPath() before calling this function
  *
- * @param {string} webUriString - the webUriString of the DL that has to be validated (If it has a custom path, remove
+ * @param {string} webUriString - the webUriString of the Digital Link that has to be validated (If it has a custom path, remove
  * it before calling this function)
- * @returns {boolean} if the DL is valid or not
+ * @returns {boolean} true if the Digital Link is valid, false otherwise
  */
-const isValid = webUriString => {
-  // If my DL is something like this : https://example.com/my/custom/path/01/01234567890128/21/12345/10/4512
-  // I need to send this to the validateURL function : https://example.com/01/01234567890128/21/12345/10/4512
-  // Otherwise, the DL will never be validated since the custom path (/my/custom/path) is not handled by the grammar file.
-  // That why you need to call removeCustomPath() before calling this function
-  return validateUrl(webUriString);
-};
+const isValid = validateUrl;
 
 /**
  * Construct a DigitalLink either from object params, a string, or built using
@@ -253,8 +257,9 @@ const DigitalLink = input => {
     }
 
     if (input.keyQualifiersOrder) {
-      if (!Array.isArray(input.keyQualifiersOrder))
+      if (!Array.isArray(input.keyQualifiersOrder)) {
         throw new Error('KeyQualifiersOrder must be an array');
+      }
 
       result[model].keyQualifiersOrder = input.keyQualifiersOrder;
     }
@@ -273,23 +278,52 @@ const DigitalLink = input => {
     return result;
   };
 
+  /**
+   * Set the identifier of the Digital Link
+   *
+   * @param {string} key - The identifier code
+   * @param {string} value - The identifier value
+   * @returns {object} the dl instance
+   */
   result.setIdentifier = (key, value) => {
     assertStringPair(key, value);
     result[model].identifier = { [key]: value };
     return result;
   };
 
+  /**
+   * Set a key qualifier of the Digital Link
+   *
+   * @param {string} key - The key qualifier code
+   * @param {string} value - The key qualifier value
+   * @returns {object} the dl instance
+   */
   result.setKeyQualifier = (key, value) => {
     assignStringPair(result[model], 'keyQualifiers', key, value);
     result[model].keyQualifiersOrder.push(key);
     return result;
   };
 
+  /**
+   * Set an attribute of the Digital Link
+   *
+   * @param {string} key - The attribute code
+   * @param {string} value - The attribute value
+   * @returns {object} the dl instance
+   */
   result.setAttribute = (key, value) => {
     assignStringPair(result[model], 'attributes', key, value);
     return result;
   };
 
+  /**
+   * Setter for the field sortKeyQualifiers
+   * If you set it to true, the key qualifiers will be sorted automatically following the grammar
+   * Otherwise, they won't
+   *
+   * @param {boolean} value
+   * @returns {object} the dl instance
+   */
   result.setSortKeyQualifiers = value => {
     if (typeof value !== 'boolean') {
       throw new Error('SortKeyQualifiers must be a boolean');
@@ -299,6 +333,12 @@ const DigitalLink = input => {
     return result;
   };
 
+  /**
+   * Setter for the field keyQualifiersOrder
+   *
+   * @param {List<string>} value - The list containing all the key qualifiers in the desired order
+   * @returns {object} the dl instance
+   */
   result.setKeyQualifiersOrder = value => {
     if (!Array.isArray(value)) throw new Error('KeyQualifiersOrder must be an array');
 
@@ -352,7 +392,7 @@ module.exports = {
     compressWebUri,
     decompressWebUri,
     isCompressedWebUri,
-    getIdentifierIndex,
+    getIdentifierCodeIndex,
     removeCustomPath,
   },
 };
