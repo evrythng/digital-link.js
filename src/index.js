@@ -49,6 +49,7 @@ const Rules = {
   glnx: 'glnx-value',
   refno: 'refno-value',
   srin: 'srin-value',
+  extensionParameter: 'extensionParameter',
   customGS1webURI: 'customGS1webURI',
   canonicalGS1webURI: 'canonicalGS1webURI',
 };
@@ -67,11 +68,6 @@ const decode = (dl, str) => {
   // http(s)://domain.xyz
   dl.domain = str.substring(0, str.indexOf('/', str.indexOf('://') + 3));
   str = str.substring(dl.domain.length);
-
-  // without this, https://example.com//01/01234567/ is considered as a valid Digital Link
-  if (str.includes('//')) {
-    throw new Error("String can't contains '//' (except for 'http(s)://')");
-  }
 
   // /first/identifier
   const segments = (str.includes('?') ? str.substring(0, str.indexOf('?')) : str)
@@ -133,7 +129,12 @@ const decode = (dl, str) => {
  */
 const getKeyQualifierWeights = identifierCode => {
   try {
-    const identifier = IDENTIFIER_LIST.find(item => item.code === identifierCode);
+    let identifier = IDENTIFIER_LIST.find(item => item.code === identifierCode);
+    if (!identifier) {
+      identifier = IDENTIFIER_LIST.find(
+        item => item.ruleName.replace('-value', '') === identifierCode,
+      );
+    }
     const keyQualifiersWeight = new Map();
 
     for (let i = 0; i < identifier.keyQualifiers.length; i += 1) {
