@@ -101,7 +101,7 @@ describe('Exports', () => {
 
   it('should export Utils.Rules', () => {
     expect(Utils.Rules).to.be.an('object');
-    expect(Object.keys(Utils.Rules).length).to.equal(30);
+    expect(Object.keys(Utils.Rules).length).to.equal(31);
   });
 
   it('should export Utils.testRule', () => {
@@ -528,7 +528,13 @@ describe('DigitalLink', () => {
         expect(dl.isValid()).to.equal(false);
       });
 
-      it('Should validate when key qualifiers are not in the right order, but were sorted', () => {
+      it('Should validate when key qualifiers are not in the right order, but were sorted (Numeric)', () => {
+        const dl = DigitalLink('https://example.com/01/01234567/21/12345/10/4512');
+        dl.setSortKeyQualifiers(true);
+        expect(dl.isValid()).to.equal(true);
+      });
+
+      it('Should validate when key qualifiers are not in the right order, but were sorted (Alphanumeric)', () => {
         const dl = DigitalLink('https://example.com/01/01234567/21/12345/10/4512');
         dl.setSortKeyQualifiers(true);
         expect(dl.isValid()).to.equal(true);
@@ -540,14 +546,13 @@ describe('DigitalLink', () => {
         }).to.throw();
       });
 
-      it("should throw an error since there is an extra '/'", () => {
-        expect(() => {
-          DigitalLink('https://example.com/01//12345678/');
-        }).to.throw();
-      });
-
       it('should not validate since the key qualifier is not matching the identifier', () => {
         const dl = DigitalLink('https://example.com/00/123456789123456789/10/4512');
+        expect(dl.isValid()).to.equal(false);
+      });
+
+      it('should not validate since dangerousGoodsParameter (4321) is a boolean is not matching the identifier', () => {
+        const dl = DigitalLink('https://example.com/01/12345678/10/4512?4321=2');
         expect(dl.isValid()).to.equal(false);
       });
     });
@@ -625,6 +630,19 @@ describe('Utils', () => {
     expect(Utils.testRule(Utils.Rules.cpv, '489327')).to.equal(true);
   });
 
+  it('should validate some custom parameters and not validate some other', () => {
+    expect(Utils.testRule(Utils.Rules.extensionParameter, 'test=true')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, 'MyParameter=1')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, '0105=abc')).to.equal(false);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, '0105:=1')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, 'a1=0')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, 'a=1')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, '789789a789789=abc')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, '789789789789a=abc')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, 'A789789789789)=abc')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.extensionParameter, '789789789789=abc')).to.equal(false);
+  });
+
   it('should not validate when rules are not met', () => {
     expect(Utils.testRule(Utils.Rules.gtin, '9780345418913d')).to.equal(false);
     expect(Utils.testRule(Utils.Rules.ser, '{}')).to.equal(false);
@@ -678,7 +696,7 @@ describe('Grammar', () => {
     expect(containTheParameter).to.equal(true);
   });
 
-  // I created this test to check if a boolean paramter can be recognized
+  // I created this test to check if a boolean parameter can be recognized
   // Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
   it('should recognize dangerousGoodsParameter', () => {
     const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913?4321=1');
