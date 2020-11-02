@@ -508,7 +508,10 @@ expiryTimeParameter 	= expiryTimeCode "=" expiryTimeValue
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;; SECTION - Extension mechanism and reserved keywords  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-extensionParameter	= *( pchar / "/" / "?" )
+sub-delims-without-equals	= "!" / "$" / "&" / "'" / "(" / ")" / "*" /
+      "+" / "," / ";"
+everythingExceptDigitsAndEquals = ALPHA / "-" / "." / "_" / "~" / pct-encoded / sub-delims-without-equals / ":" / "@" / "/" / "?"
+extensionParameter	= *( DIGIT ) everythingExceptDigitsAndEquals *( DIGIT / everythingExceptDigitsAndEquals / "=")
 	; any other query string parameter permitted by RFC 3986
 	; including additional arbitrary key=value pairs except as
 	; restricted in the above paragraph
