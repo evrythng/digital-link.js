@@ -7,7 +7,7 @@ const DATA = {
   domain: 'https://gs1.evrythng.com',
   identifier: {
     key: '01',
-    value: '9780345418913',
+    value: '09780345418913',
   },
   serialQualifier: {
     key: '21',
@@ -28,9 +28,9 @@ const DATA = {
   },
   linkType: 'test',
   url:
-    'https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh&linkType=test',
+    'https://gs1.evrythng.com/01/09780345418913/10/38737643/21/58943?15=230911&thngId=U5mQKGDpnymBwQwRakyBqeYh&linkType=test',
   jsonString:
-    '{"domain":"https://gs1.evrythng.com","identifier":{"01":"9780345418913"},"keyQualifiers":{"10":"38737643","21":"58943"},"attributes":{"15":"230911","thngId":"U5mQKGDpnymBwQwRakyBqeYh"},"sortKeyQualifiers":false,"keyQualifiersOrder":["10","21"],"linkType":"test"}',
+    '{"domain":"https://gs1.evrythng.com","identifier":{"01":"09780345418913"},"keyQualifiers":{"10":"38737643","21":"58943"},"attributes":{"15":"230911","thngId":"U5mQKGDpnymBwQwRakyBqeYh"},"sortKeyQualifiers":false,"keyQualifiersOrder":["10","21"],"linkType":"test"}',
   compressedWebUri:
     'https://gs1.evrythng.com/HxHKVAdpQhCTxbrOF_yEFcx_4a2GeAh1mFOZkChg6Z8pgcEMEWpMganmIfESxTyJ5UvMJa9Za',
 };
@@ -161,7 +161,7 @@ describe('DigitalLink', () => {
     });
 
     it('should create from string - domain + identifier', () => {
-      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+      const dl = DigitalLink('https://gs1.evrythng.com/01/09780345418913');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
       expect(dl.getIdentifier()).to.deep.equal({
@@ -431,7 +431,7 @@ describe('DigitalLink', () => {
       const values = {
         gtin: {
           ai: '01',
-          value: '12345670',
+          value: '00000012345670',
         },
         lot: {
           ai: '10',
@@ -526,88 +526,88 @@ describe('DigitalLink', () => {
     it('should parse a valid URL trace history', () => {
       const expected = {
         trace: [
-          { rule: 'scheme', match: 'https', remainder: '://gs1.evrythng.com/01/9780345418913' },
-          { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
-          { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
-          { rule: 'hostname', match: 'gs1.evrythng.com', remainder: '/01/9780345418913' },
+          { rule: 'scheme', match: 'https', remainder: '://gs1.evrythng.com/01/09780345418913' },
+          { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/09780345418913' },
+          { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/09780345418913' },
+          { rule: 'hostname', match: 'gs1.evrythng.com', remainder: '/01/09780345418913' },
           {
             rule: 'customURIstem',
             match: 'https://gs1.evrythng.com',
-            remainder: '/01/9780345418913',
+            remainder: '/01/09780345418913',
           },
-          { rule: 'gtin-code', match: '01', remainder: '/9780345418913' },
-          { rule: 'gtin-value', match: '9780345418913', remainder: '' },
-          { rule: 'gtin-comp', match: '/01/9780345418913', remainder: '' },
-          { rule: 'gtin-path', match: '/01/9780345418913', remainder: '' },
-          { rule: 'gs1path', match: '/01/9780345418913', remainder: '' },
-          { rule: 'uncompressedGS1webURIPattern', match: '/01/9780345418913', remainder: '' },
+          { rule: 'gtin-code', match: '01', remainder: '/09780345418913' },
+          { rule: 'gtin-value', match: '09780345418913', remainder: '' },
+          { rule: 'gtin-comp', match: '/01/09780345418913', remainder: '' },
+          { rule: 'gtin-path', match: '/01/09780345418913', remainder: '' },
+          { rule: 'gs1path', match: '/01/09780345418913', remainder: '' },
+          { rule: 'uncompressedGS1webURIPattern', match: '/01/09780345418913', remainder: '' },
           {
             rule: 'uncompressedCustomGS1webURI',
-            match: 'https://gs1.evrythng.com/01/9780345418913',
+            match: 'https://gs1.evrythng.com/01/09780345418913',
             remainder: '',
           },
         ],
         success: true,
       };
 
-      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+      const dl = DigitalLink('https://gs1.evrythng.com/01/09780345418913');
       expect(dl.getValidationTrace()).to.deep.equal(expected);
     });
 
     it('should parse an invalid URL trace history', () => {
       const expected = {
         trace: [
-          { rule: 'scheme', match: 'https', remainder: '://gs1.evrythng.com/01/9780345418913d' },
-          { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
-          { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
-          { rule: 'hostname', match: 'gs1.evrythng.com', remainder: '/01/9780345418913d' },
+          { rule: 'scheme', match: 'https', remainder: '://gs1.evrythng.com/01/09780345418913d' },
+          { rule: 'reg-name', match: 'gs1.evrythng.com', remainder: '/01/09780345418913d' },
+          { rule: 'host', match: 'gs1.evrythng.com', remainder: '/01/09780345418913d' },
+          { rule: 'hostname', match: 'gs1.evrythng.com', remainder: '/01/09780345418913d' },
           {
             rule: 'customURIstem',
             match: 'https://gs1.evrythng.com',
-            remainder: '/01/9780345418913d',
+            remainder: '/01/09780345418913d',
           },
-          { rule: 'gtin-code', match: '01', remainder: '/9780345418913d' },
-          { rule: 'gtin-value', match: '9780345418913', remainder: 'd' },
-          { rule: 'gtin-comp', match: '/01/9780345418913', remainder: 'd' },
-          { rule: 'gtin-path', match: '/01/9780345418913', remainder: 'd' },
-          { rule: 'gs1path', match: '/01/9780345418913', remainder: 'd' },
-          { rule: 'uncompressedGS1webURIPattern', match: '/01/9780345418913', remainder: 'd' },
+          { rule: 'gtin-code', match: '01', remainder: '/09780345418913d' },
+          { rule: 'gtin-value', match: '09780345418913', remainder: 'd' },
+          { rule: 'gtin-comp', match: '/01/09780345418913', remainder: 'd' },
+          { rule: 'gtin-path', match: '/01/09780345418913', remainder: 'd' },
+          { rule: 'gs1path', match: '/01/09780345418913', remainder: 'd' },
+          { rule: 'uncompressedGS1webURIPattern', match: '/01/09780345418913', remainder: 'd' },
           {
             rule: 'uncompressedCustomGS1webURI',
-            match: 'https://gs1.evrythng.com/01/9780345418913',
+            match: 'https://gs1.evrythng.com/01/09780345418913',
             remainder: 'd',
           },
         ],
         success: false,
       };
-      const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913d');
+      const dl = DigitalLink('https://gs1.evrythng.com/01/09780345418913d');
       expect(dl.getValidationTrace()).to.deep.equal(expected);
     });
 
     describe('Some example test cases', () => {
       it('should allow a GTIN only', () => {
-        const dl = DigitalLink('https://example.com/01/01234565/');
+        const dl = DigitalLink('https://example.com/01/00000001234565/');
         expect(dl.isValid()).to.equal(true);
       });
 
       it('should allow a GTIN with two key qualifiers', () => {
-        const dl = DigitalLink('https://example.com/01/01234565/10/12345/21/4512');
+        const dl = DigitalLink('https://example.com/01/00000001234565/10/12345/21/4512');
         expect(dl.isValid()).to.equal(true);
       });
 
       it('should not validate since the key qualifiers are not in the right order', () => {
-        const dl = DigitalLink('https://example.com/01/01234567/21/12345/10/4512');
+        const dl = DigitalLink('https://example.com/01/00000001234565/21/12345/10/4512');
         expect(dl.isValid()).to.equal(false);
       });
 
       it('Should validate when key qualifiers are not in the right order, but were sorted (Numeric)', () => {
-        const dl = DigitalLink('https://example.com/01/01234565/21/12345/10/4512');
+        const dl = DigitalLink('https://example.com/01/00000001234565/21/12345/10/4512');
         dl.setSortKeyQualifiers(true);
         expect(dl.isValid()).to.equal(true);
       });
 
       it('Should validate when key qualifiers are not in the right order, but were sorted (Alphanumeric)', () => {
-        const dl = DigitalLink('https://example.com/01/01234565/21/12345/10/4512');
+        const dl = DigitalLink('https://example.com/01/00000001234565/21/12345/10/4512');
         dl.setSortKeyQualifiers(true);
         expect(dl.isValid()).to.equal(true);
       });
@@ -629,16 +629,16 @@ describe('DigitalLink', () => {
       });
 
       it('should validate since additionalIdParameter is a xchar', () => {
-        const dl = DigitalLink('https://example.com/01/12345670/10/4512?240=ABCD');
+        const dl = DigitalLink('https://example.com/01/00000012345670/10/4512?240=ABCD');
         expect(dl.isValid()).to.equal(true);
       });
 
       it('should validate only valid check digits for gtin', () => {
-        let dl = DigitalLink('https://example.com/gtin/012345678905');
+        let dl = DigitalLink('https://example.com/gtin/00012345678905');
         expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/01/012345678905');
+        dl = DigitalLink('https://example.com/01/00012345678905');
         expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/01/012345678906');
+        dl = DigitalLink('https://example.com/01/00012345678906');
         expect(dl.isValid()).to.equal(false);
       });
 
@@ -709,7 +709,7 @@ describe('DigitalLink', () => {
       });
 
       it('should validate since linkTypes are authorized', () => {
-        const dl = DigitalLink('https://example.com/01/12345670/10/4512?linkType=ABCD');
+        const dl = DigitalLink('https://example.com/01/00000012345670/10/4512?linkType=ABCD');
         expect(dl.isValid()).to.equal(true);
       });
 
@@ -783,7 +783,7 @@ describe('Compression', () => {
 
 describe('Utils', () => {
   it('should validate some rules', () => {
-    expect(Utils.testRule(Utils.Rules.gtin, '9780345418913')).to.equal(true);
+    expect(Utils.testRule(Utils.Rules.gtin, '09780345418913')).to.equal(true);
     expect(Utils.testRule(Utils.Rules.ser, '58943')).to.equal(true);
     expect(Utils.testRule(Utils.Rules.cpv, '489327')).to.equal(true);
   });
@@ -864,14 +864,14 @@ describe('Check digits', () => {
 
 describe('Grammar', () => {
   it('should recognize https and not http', () => {
-    const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913');
+    const dl = DigitalLink('https://gs1.evrythng.com/01/09780345418913');
     expect(dl.getValidationTrace().trace[0].match).to.equal('https');
   });
 
   // I created this test to check if a single parameter can be recognized
   // Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
   it('should recognize notBeforeDelDateParameter', () => {
-    const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913?4324=1234567891');
+    const dl = DigitalLink('https://gs1.evrythng.com/01/09780345418913?4324=1234567891');
     let containTheParameter = false;
     dl.getValidationTrace().trace.forEach(e => {
       if (e.rule === 'notBeforeDelDateParameter') containTheParameter = true;
@@ -882,7 +882,7 @@ describe('Grammar', () => {
   // I created this test to check if a boolean parameter can be recognized
   // Warning : if you move to another version, you might need to update this test (if the parameter doesn't exist anymore or its code change..)
   it('should recognize dangerousGoodsParameter', () => {
-    const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913?4321=1');
+    const dl = DigitalLink('https://gs1.evrythng.com/01/09780345418913?4321=1');
     let containTheParameter = false;
     dl.getValidationTrace().trace.forEach(e => {
       if (e.rule === 'dangerousGoodsParameter') containTheParameter = true;
