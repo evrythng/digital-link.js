@@ -647,8 +647,6 @@ uncompressedGS1webURIPattern 	= gs1path [queryStringComp]
 
 referenceGS1webURI	= "https://id.gs1.org" uncompressedGS1webURIPattern
 
-optionalPathSegment	= "/" segment
-
-customURIstem		= scheme "://" hostname *optionalPathSegment
+customURIstem		= scheme "://" hostname ; *( "/" segment )
 
 uncompressedCustomGS1webURI 	= customURIstem uncompressedGS1webURIPattern
