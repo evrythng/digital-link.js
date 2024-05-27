@@ -53,31 +53,32 @@ YCHAR 		= DIGIT / UPPERALPHA / YSYMBOL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   SECTION - Primary identification keys  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-gtin-code	= "01"	/ %s"gtin"		; GTIN
-itip-code	= "8006" / %s"itip"		; ITIP
-gmn-code	= "8013" / %s"gmn"		; Global Model Number
-cpid-code	= "8010" / %s"cpid"		; CPID
-gln-code 	= "414"	/ %s"gln"		; Physical Location GLN
-partyGln-code	= "417"	/ %s"party" 	; Party GLN
-gsrnp-code 	= "8017" / %s"gsrnp"	; GSRN of the Provider
-gsrn-code 	= "8018" / %s"gsrn"		; GSRN of the Recipient
-gcn-code 	= "255"	/ %s"gcn"		; GCN
-sscc-code 	= "00" / %s"sscc"		; SSCC
-gdti-code 	= "253"	/ %s"gdti"		; GDTI
-ginc-code 	= "401"	/ %s"ginc"		; GINC
-gsin-code 	= "402"	/ %s"gsin"		; GSIN
-grai-code 	= "8003" / %s"grai"		; GRAI
-giai-code 	= "8004" / %s"giai"		; GIAI
+gtin-code	= "01"		; GTIN
+itip-code	= "8006"		; ITIP
+gmn-code	= "8013"		; Global Model Number
+cpid-code	= "8010"		; CPID
+gln-code 	= "414"		; Physical Location GLN
+payTo-code	= "415"	; GLN of invoicing party
+partyGln-code	= "417"	; Party GLN
+gsrnp-code 	= "8017"	; GSRN of the Provider
+gsrn-code 	= "8018"	; GSRN of the Recipient
+gcn-code 	= "255"	; GCN
+sscc-code 	= "00"	; SSCC
+gdti-code 	= "253"	; GDTI
+ginc-code 	= "401"	; GINC
+gsin-code 	= "402"	; GSIN
+grai-code 	= "8003"	; GRAI
+giai-code 	= "8004"	; GIAI
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; SECTION - Key qualifiers  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-cpv-code 	= "22"	/ %s"cpv"   ; Consumer Product Variant
-lot-code 	= "10"	/ %s"lot"   ; Batch/Lot identifier
-ser-code 	= "21"	/ %s"ser"   ; GTIN Serial Number
-cpsn-code 	= "8011"	/ %s"cpsn"  ; CPID Serial Number
-glnx-code 	= "254"	/ %s"glnx"  ; GLN extension
-refno-code	= "8020"	/ %s"refno" ; Payment Reference Number
-srin-code 	= "8019"	/ %s"srin"  ; Service Relation Instance Number
+cpv-code 	= "22"	; Consumer Product Variant
+lot-code 	= "10"	; Batch/Lot identifier
+ser-code 	= "21"	; GTIN Serial Number
+cpsn-code 	= "8011"	; CPID Serial Number
+glnx-code 	= "254"	; GLN extension
+refno-code	= "8020"	; Payment Reference Number
+srin-code 	= "8019"	; Service Relation Instance Number
 tpx-code	= "235"	; third-party controlled serialised extension to GTIN
 uic-ext-code	= "7040"	; GS1 UIC with Extension 1 and Importer Index
 
@@ -85,19 +86,20 @@ uic-ext-code	= "7040"	; GS1 UIC with Extension 1 and Importer Index
 
 gtin-value		= 14DIGIT ; GTIN-8, GTIN-12 and GTIN-13 SHALL be expressed as 14 digits, with leading zeroes serving as filler digits
 itip-value	= 14DIGIT 2DIGIT 2DIGIT ; 14 digits then 2 digits then 2 digits
-gmn-value 	= 1*30XCHAR  ; 1-30 characters from 82-chr subset
+gmn-value 	= 1*25XCHAR  ; 1-25 characters from 82-chr subset
 cpid-value 	= 1*30YCHAR  ; 1-30 characters from 39-chr subset
 
 gln-value 	= 13DIGIT   ; exactly 13 digits
+payTo-value 	= 13DIGIT   ; exactly 13 digits
 partyGln-value 	= 13DIGIT   ; exactly 13 digits
 gsrnp-value 	= 18DIGIT   ; exactly 18 digits
 gsrn-value 	= 18DIGIT   ; exactly 18 digits
-gcn-value 	= 13DIGIT 1*12DIGIT  ; 13 digits then 1-12 digits
+gcn-value 	= 13DIGIT [1*12DIGIT]  ; 13 digits then optional 1-12 digits
 sscc-value 	= 18DIGIT   ; exactly 18 digits
-gdti-value 	= 13DIGIT 1*17XCHAR  ; 13 digits then 1-17 characters ; from the 82-character subset
+gdti-value 	= 13DIGIT [1*17XCHAR]  ; 13 digits then optional 1-17 characters ; from the 82-character subset
 ginc-value 	= 1*30XCHAR  ; 1-30 characters from the 82-character subset
 gsin-value 	= 17DIGIT   ; exactly 17 digits
-grai-value 	= 14DIGIT 1*16XCHAR; 14 digits then 1-16 characters ; from the 82-character subset of ISO/IEC 646
+grai-value 	= 14DIGIT [1*16XCHAR]; 14 digits then optional 1-16 characters ; from the 82-character subset of ISO/IEC 646
 giai-value 	= 1*30XCHAR  ; 1-30 characters from 82-chr subset
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; SECTION - Key qualifier formats  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -119,6 +121,7 @@ itip-comp 	= "/" itip-code "/" itip-value
 gmn-comp 	= "/" gmn-code "/" gmn-value
 cpid-comp 	= "/" cpid-code "/" cpid-value
 gln-comp 	= "/" gln-code "/" gln-value
+payTo-comp	= "/" payTo-code "/" payTo-value
 partyGln-comp	= "/" partyGln-code "/" partyGln-value
 gsrnp-comp	= "/" gsrnp-code "/" gsrnp-value
 gsrn-comp	= "/" gsrn-code "/" gsrn-value
@@ -149,6 +152,7 @@ itip-path 	= itip-comp  [cpv-comp] [lot-comp] [ser-comp]
 gmn-path 	= gmn-comp
 cpid-path 	= cpid-comp  [cpsn-comp]
 gln-path 	= gln-comp   [glnx-comp]
+payTo-path	= payTo-comp
 partyGln-path	= partyGln-comp
 gsrnp-path	= gsrnp-comp [srin-comp]
 gsrn-path 	= gsrn-comp  [srin-comp]
@@ -272,7 +276,7 @@ sellByDateParameter	= "16=" 6DIGIT
 
 firstFreezeDateParameter	= "7006=" 6DIGIT
 
-harvestDateParameter	= "7007=" 6*12DIGIT
+harvestDateParameter	= "7007=" 6DIGIT [6DIGIT]
 
 pricePerUnitParameter	= "8005=" 6DIGIT
 
@@ -282,19 +286,19 @@ varCountParameter	= "30=" 1*8DIGIT
 
 countParameter	= "37=" 1*8DIGIT
 
-mutualParameter	= "90=" 1*30DIGIT
+mutualParameter	= "90=" 1*30XCHAR
 
 additionalIdParameter	= "240=" 1*30XCHAR
 
-custPartNoParameter	= "241=" 1*30DIGIT
+custPartNoParameter	= "241=" 1*30XCHAR
 
-mtoVariantParameter	= "242=" 6DIGIT
+mtoVariantParameter	= "242=" 1*6DIGIT
 
-pcnParameter	= "243=" 1*20DIGIT
+pcnParameter	= "243=" 1*20XCHAR
 
-secondarySerialParameter	= "250=" 1*30DIGIT
+secondarySerialParameter	= "250=" 1*30XCHAR
 
-refToSourceParameter	= "251=" 1*30DIGIT
+refToSourceParameter	= "251=" 1*30XCHAR
 
 amountCode 	= "3900" / "3901" / "3902" / "3903" / "3904" / "3905"
 amountValue 	= 1*15DIGIT
@@ -316,9 +320,9 @@ percentOffCode 	= "3940" / "3941" / "3942" / "3943" / "3944" / "3945"
 percentOffValue 	= 4DIGIT
 percentOffParameter 	= percentOffCode "=" percentOffValue
 
-orderNumberParameter	= "400=" 1*30DIGIT
+orderNumberParameter	= "400=" 1*30XCHAR
 
-routeParameter	= "403=" 1*30DIGIT
+routeParameter	= "403=" 1*30XCHAR
 
 shipToLocParameter	= "410=" 13DIGIT
 
@@ -327,10 +331,6 @@ billToParameter	= "411=" 13DIGIT
 purchaseFromParameter	= "412=" 13DIGIT
 
 shipForLocParameter	= "413=" 13DIGIT
-
-locNoParameter	= "414=" 13DIGIT
-
-payToParameter	= "415=" 13DIGIT
 
 prodServLocParameter	= "416=" 13DIGIT
 
@@ -360,6 +360,8 @@ nhrnDRNParameter	= "713=" 1*20XCHAR
 
 nhrnAIMParameter	= "714=" 1*20XCHAR
 
+nhrnUS-FDAParameter	= "715=" 1*20XCHAR
+
 nsnParameter	= "7001=" 13DIGIT
 
 meatCutParameter	= "7002=" 1*30XCHAR
@@ -384,7 +386,7 @@ giaiAssemblyParameter	= "7023=" 1*30XCHAR
 
 certificationRefCode 		= "7230" / "7231" / "7232" / "7233" / "7234" /
  "7235" / "7236" / "7237" / "7238" / "7239"
-certificationRefValue 	= 2*30XCHAR
+certificationRefValue 	= 2XCHAR 1*28XCHAR
 certificationRefParameter = certificationRefCode "=" certificationRefValue
 
 dimensionsParameter	= "8001=" 14DIGIT
@@ -393,11 +395,11 @@ cmtNoParameter	= "8002=" 1*20XCHAR
 
 ibanParameter	= "8007=" 1*34XCHAR
 
-prodTimeParameter	= "8008=" 8DIGIT 1*4DIGIT
+prodTimeParameter	= "8008=" 8DIGIT [2DIGIT] [2DIGIT]
 
 opticalSensorParameter	= "8009=" 1*50XCHAR
 
-versionParameter	= "8012=" 4DIGIT  1*20XCHAR
+versionParameter	= "8012=" 1*20XCHAR
 
 refNoParameter	= "8020=" 1*25XCHAR
 
@@ -477,6 +479,8 @@ cpidParameter	= "8010=" cpid-value
 
 glnParameter	= "414=" gln-value
 
+payToParameter	= "415=" payTo-value
+
 partyGlnParameter	= "417=" partyGln-value
 
 gsrnpParameter	= "8017=" gsrnp-value
@@ -503,11 +507,11 @@ internalParameter	= internalCode "=" internalValue
 
 LotParameter 	= lot-code "=" lot-value
 
-expiryDateCode 	= "17" / %s"exp"
+expiryDateCode 	= "17"
 expiryDateValue 	= 6DIGIT
 expiryDateParameter 	= expiryDateCode "=" expiryDateValue
 
-expiryTimeCode 	= "7003" / %s"expdt"
+expiryTimeCode 	= "7003"
 expiryTimeValue 	= 10DIGIT
 expiryTimeParameter 	= expiryTimeCode "=" expiryTimeValue
 
@@ -540,7 +544,7 @@ queryStringParam 	= netWeightVMTIParameter / lengthVMTIParameter /
 		priceParameter / priceISOParameter / percentOffParameter /
 		orderNumberParameter / routeParameter / shipToLocParameter /
 		billToParameter / purchaseFromParameter / shipForLocParameter /
-		locNoParameter / prodServLocParameter / shipToPostParameter /
+		prodServLocParameter / shipToPostParameter /
 		shipToPostISOParameter / originParameter /
 		countryProcessParameter / countryFullProcessParameter /
 		countryInitialProcessParameter / countryDisassemblyParameter /
@@ -569,7 +573,7 @@ queryStringParam 	= netWeightVMTIParameter / lengthVMTIParameter /
 		sigRequiredParameter / notBeforeDelDateParameter /
 		notAfterDelDateParameter / releaseDateParameter /
 		gtinParameter  / itipParameter / gmnParameter / cpidParameter /
-		glnParameter / partyGlnParameter / gsrnpParameter /
+		glnParameter / payToParameter / partyGlnParameter / gsrnpParameter /
 		gsrnParameter / gcnParameter / ssccParameter / gdtiParameter /
 		gincParameter / gsinParameter / graiParameter /
 		giaiParameter
@@ -643,6 +647,8 @@ uncompressedGS1webURIPattern 	= gs1path [queryStringComp]
 
 referenceGS1webURI	= "https://id.gs1.org" uncompressedGS1webURIPattern
 
-customURIstem		= scheme "://" hostname ; *( "/" segment )
+optionalPathSegment	= "/" segment
+
+customURIstem		= scheme "://" hostname *optionalPathSegment
 
 uncompressedCustomGS1webURI 	= customURIstem uncompressedGS1webURIPattern
