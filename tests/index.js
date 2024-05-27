@@ -634,77 +634,73 @@ describe('DigitalLink', () => {
       });
 
       it('should validate only valid check digits for gtin', () => {
-        let dl = DigitalLink('https://example.com/gtin/00012345678905');
-        expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/01/00012345678905');
+        let dl = DigitalLink('https://example.com/01/00012345678905');
         expect(dl.isValid()).to.equal(true);
         dl = DigitalLink('https://example.com/01/00012345678906');
         expect(dl.isValid()).to.equal(false);
       });
 
       it('should validate only valid check digits for grai', () => {
-        let dl = DigitalLink('https://example.com/grai/050606547800290002');
+        let dl = DigitalLink('https://example.com/8003/050606547800290002');
         expect(dl.isValid()).to.equal(true);
         dl = DigitalLink('https://example.com/8003/050606547800230002');
         expect(dl.isValid()).to.equal(false);
       });
 
       it('should validate only valid check digits for gln', () => {
-        let dl = DigitalLink('https://example.com/gln/0123456789128');
+        let dl = DigitalLink('https://example.com/414/0123456789128');
         expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/gln/0123456789123');
+        dl = DigitalLink('https://example.com/414/0123456789123');
         expect(dl.isValid()).to.equal(false);
       });
 
       it('should validate only valid check digits for sscc', () => {
-        let dl = DigitalLink('https://example.com/sscc/012345678912345675');
+        let dl = DigitalLink('https://example.com/00/012345678912345675');
         expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/sscc/012345678912345673');
+        dl = DigitalLink('https://example.com/00/012345678912345673');
         expect(dl.isValid()).to.equal(false);
       });
 
       it('should validate only valid check digits for gsrn', () => {
-        let dl = DigitalLink('https://example.com/gsrn/012345678912345675');
+        let dl = DigitalLink('https://example.com/8018/012345678912345675');
         expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/gsrn/012345678912345673');
+        dl = DigitalLink('https://example.com/8018/012345678912345673');
         expect(dl.isValid()).to.equal(false);
       });
 
       it('should validate only valid check digits for gdti', () => {
-        let dl = DigitalLink('https://example.com/gdti/012345178912345667');
+        let dl = DigitalLink('https://example.com/253/012345178912345667');
         expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/gdti/012341178912345667');
+        dl = DigitalLink('https://example.com/253/012341178912345667');
         expect(dl.isValid()).to.equal(false);
       });
 
       it('should validate only valid check digits for gsin', () => {
-        let dl = DigitalLink('https://example.com/gsin/01234367891244565');
+        let dl = DigitalLink('https://example.com/402/01234367891244565');
         expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/gsin/01234567891244565');
+        dl = DigitalLink('https://example.com/402/01234567891244565');
         expect(dl.isValid()).to.equal(false);
       });
 
       it('should validate only valid check digits for gcn', () => {
-        let dl = DigitalLink('https://example.com/gcn/01234567891284569');
+        let dl = DigitalLink('https://example.com/255/01234567891284569');
         expect(dl.isValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/gcn/01234567891244569');
+        dl = DigitalLink('https://example.com/255/01234567891244569');
         expect(dl.isValid()).to.equal(false);
       });
 
 
       it("should not validate since the identifier hasn't any check digit", () => {
-        let dl = DigitalLink('https://example.com/giai/0801234126');
+        let dl = DigitalLink('https://example.com/8004/0801234126');
         expect(dl.isValid()).to.equal(false);
-        dl = DigitalLink('https://example.com/giai/0801234127');
+        dl = DigitalLink('https://example.com/8004/0801234127');
         expect(dl.isValid()).to.equal(false);
       });
 
       it("should use the isCheckDigitValid method correctly", () => {
-        let dl = DigitalLink('https://example.com/gtin/012345678905');
+        let dl = DigitalLink('https://example.com/01/00012345678905');
         expect(dl.isCheckDigitValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/01/012345678905');
-        expect(dl.isCheckDigitValid()).to.equal(true);
-        dl = DigitalLink('https://example.com/01/012345678906');
+        dl = DigitalLink('https://example.com/01/00012345678906');
         expect(dl.isCheckDigitValid()).to.equal(false);
       });
 
@@ -719,7 +715,7 @@ describe('DigitalLink', () => {
 
 describe('Compression', () => {
   it('should compress a Digital Link URI', () => {
-    const input = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+    const input = 'https://dlnkd.tn.gg/01/09780345418913/10/231/21/345345?15=120820';
     const expected = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
 
     expect(Utils.compressWebUri(input)).to.equal(expected);
@@ -744,13 +740,6 @@ describe('Compression', () => {
     expect(Utils.decompressWebUri(input)).to.equal(expected);
   });
 
-  it('should decompress a compressed Digital Link URI using short AI names', () => {
-    const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
-    const expected = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
-
-    expect(Utils.decompressWebUri(input, true)).to.equal(expected);
-  });
-
   it('should detect a compressed Digital Link URI', () => {
     const input = 'https://dlnkd.tn.gg/HxHKVAdpQgZzjr-hCDKigI';
 
@@ -758,7 +747,7 @@ describe('Compression', () => {
   });
 
   it('should detect an uncompressed Digital Link URI', () => {
-    const input = 'https://dlnkd.tn.gg/gtin/09780345418913/lot/231/ser/345345?15=120820';
+    const input = 'https://dlnkd.tn.gg/01/09780345418913/10/231/21/345345?15=120820';
 
     expect(Utils.isCompressedWebUri(input)).to.equal(false);
   });
