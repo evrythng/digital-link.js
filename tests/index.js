@@ -173,7 +173,7 @@ describe('DigitalLink', () => {
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '09780345418913' });
       expect(dl.getKeyQualifier('10')).to.equal('38737643');
     });
 
@@ -181,7 +181,7 @@ describe('DigitalLink', () => {
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643?linkType=barcode');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '09780345418913' });
       expect(dl.getKeyQualifier('10')).to.equal('38737643');
       expect(dl.getLinkType()).to.equal('barcode');
     });
@@ -190,7 +190,7 @@ describe('DigitalLink', () => {
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643/21/58943');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '09780345418913' });
       expect(dl.getKeyQualifier('10')).to.equal('38737643');
       expect(dl.getKeyQualifier('21')).to.equal('58943');
     });
@@ -199,7 +199,7 @@ describe('DigitalLink', () => {
       const dl = DigitalLink('https://gs1.evrythng.com/01/9780345418913/10/38737643?15=230911');
 
       expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '09780345418913' });
       expect(dl.getKeyQualifier('10')).to.equal('38737643');
       expect(dl.getAttribute('15')).to.equal('230911');
     });
@@ -210,7 +210,7 @@ describe('DigitalLink', () => {
       );
 
       expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '09780345418913' });
       expect(dl.getKeyQualifier('10')).to.equal('38737643');
       expect(dl.getKeyQualifier('21')).to.equal('58943');
       expect(dl.getAttribute('15')).to.equal('230911');
@@ -223,7 +223,7 @@ describe('DigitalLink', () => {
       );
 
       expect(dl.getDomain()).to.equal(DATA.domain);
-      expect(dl.getIdentifier()).to.deep.equal({ '01': '9780345418913' });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '09780345418913' });
       expect(dl.getKeyQualifier('10')).to.equal('38737643');
       expect(dl.getKeyQualifier('21')).to.equal('58943');
       expect(dl.getAttribute('15')).to.equal('230911');
@@ -257,9 +257,98 @@ describe('DigitalLink', () => {
       // Including a partially constructed URI
       const partial = 'https://gs1.evrythng.com/01/123';
 
+      
       expect(() => DigitalLink(partial)).to.not.throw();
       expect(DigitalLink(partial).isValid()).to.equal(false);
     });
+
+    it('should always pad a valid the GTIN of 8 digits to 14 digits from a string', () => {
+      let dl = DigitalLink('https://gs1.evrythng.com/01/40170725');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00000040170725' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should always pad a valid the GTIN of 8 digits to 14 digits from setters', () => {
+      let dl = DigitalLink();
+      dl.setDomain('https://gs1.evrythng.com');
+      dl.setIdentifier('01', '40170725');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00000040170725' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should always pad a valid the GTIN of 8 digits to 14 digits from object', () => {
+      let dl =  DigitalLink({
+        domain: 'https://gs1.evrythng.com',
+        identifier: { ['01']: '40170725' },
+      });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00000040170725' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should always pad a valid the GTIN of 12 digits to 14 digits from a string', () => {
+      let dl = DigitalLink('https://gs1.evrythng.com/01/012345678905');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00012345678905' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should always pad a valid the GTIN of 12 digits to 14 digits from setters', () => {
+      let dl = DigitalLink();
+      dl.setDomain('https://gs1.evrythng.com');
+      dl.setIdentifier('01', '012345678905');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00012345678905' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should always pad a valid the GTIN of 12 digits to 14 digits from object', () => {
+      let dl =  DigitalLink({
+        domain: 'https://gs1.evrythng.com',
+        identifier: { ['01']: '012345678905' },
+      });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00012345678905' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should always pad a valid the GTIN of 13 digits to 14 digits from a string', () => {
+      let dl = DigitalLink('https://gs1.evrythng.com/01/0123456789050');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00123456789050' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should always pad a valid the GTIN of 13 digits to 14 digits from setters', () => {
+      let dl = DigitalLink();
+      dl.setDomain('https://gs1.evrythng.com');
+      dl.setIdentifier('01', '0123456789050');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00123456789050' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should always pad a valid GTIN of 13 digits to 14 digits from object', () => {
+      let dl =  DigitalLink({
+        domain: 'https://gs1.evrythng.com',
+        identifier: { ['01']: '0123456789050' },
+      });
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '00123456789050' });
+      expect(dl.isValid()).to.equal(true);
+    });
+
+    it('should never pad an invalid the GTIN of 8 digits to 14 digits', () => {
+      let dl = DigitalLink('https://gs1.evrythng.com/01/12345678');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '12345678' });
+      expect(dl.isValid()).to.equal(false);
+    });
+
+    it('should never pad an invalid the GTIN of 12 digits to 14 digits', () => {
+      let dl = DigitalLink('https://gs1.evrythng.com/01/123456789000');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '123456789000' });
+      expect(dl.isValid()).to.equal(false);
+    });
+
+    it('should never pad an invalid the GTIN of 13 digits to 14 digits', () => {
+      let dl = DigitalLink('https://gs1.evrythng.com/01/1234567890123');
+      expect(dl.getIdentifier()).to.deep.equal({ '01': '1234567890123' });
+      expect(dl.isValid()).to.equal(false);
+    });
+
   });
 
   describe('Invalid Creation', () => {
@@ -482,9 +571,9 @@ describe('DigitalLink', () => {
     });
 
     it('should set a linktype', () => {
-      dl = DigitalLink('https://gs1.evrythng.com/01/12345678');
+      dl = DigitalLink('https://gs1.evrythng.com/01/40170725');
       expect(() => dl.setLinkType('test')).to.not.throw();
-      expect(dl.toWebUriString()).to.equal('https://gs1.evrythng.com/01/12345678?linkType=test');
+      expect(dl.toWebUriString()).to.equal('https://gs1.evrythng.com/01/00000040170725?linkType=test');
     });
   });
 
