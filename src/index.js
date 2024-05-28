@@ -308,6 +308,13 @@ const DigitalLink = input => {
   result.setIdentifier = (key, value) => {
     assertStringPair(key, value);
     result[model].identifier = { [key]: value };
+    if(key === '01' && (value.length === 8 || value.length === 12 || value.length === 13)) {
+      if (validateIdentifierCheckDigit(result[model])){
+        // pad the GTIN (identifier) with 0s if it's 8/12/13 digits long
+        value = '0'.repeat(14 - value.length) + value;
+        result[model].identifier = { [key]: value };
+      }
+    }
     return result;
   };
 
@@ -415,6 +422,16 @@ const DigitalLink = input => {
     );
   };
   result.isCheckDigitValid = () => validateIdentifierCheckDigit(result[model]);
+  
+  if(result[model].identifier['01'] 
+      && (result[model].identifier['01'].length === 8 
+      || result[model].identifier['01'].length === 12 
+      || result[model].identifier['01'].length === 13)) {
+    if (validateIdentifierCheckDigit(result[model])){
+      // pad the GTIN (identifier) with 0s if it's 8/12/13 digits long
+      result[model].identifier['01'] = '0'.repeat(14 - result[model].identifier['01'].length) + result[model].identifier['01'];
+    }
+  }
 
   /**
    * Allows you to see each step of the validation of the digital link.
