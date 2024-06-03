@@ -1,0 +1,8 @@
+.*
+jenkins/
+reports/
+tests/
+test-app/
+test-app-html/
+Dockerfile
+Dockerfile.test

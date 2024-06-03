@@ -1,6 +1,6 @@
 {
   "name": "digital-link.js",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A Javascript SDK for creating, validating and working with the GS1 Digital Link.",
   "main": "src/index.js",
   "browser": "./dist/digital-link.js.browser",

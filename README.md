@@ -36,7 +36,7 @@ const { DigitalLink, Utils } = require('digital-link.js');
 Add a `<script>` tag to your HTML page:
 
 ```html
-<script src="https://d10ka0m22z5ju5.cloudfront.net/js/digital-link.js/1.3.0/digital-link.js-1.3.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/digital-link.js@1.4.2/dist/digital-link.js.browser.js"></script>
 ```
 
 Then access the `digitalLinkJs` global variable:
