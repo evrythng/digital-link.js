@@ -362,7 +362,7 @@ apg -i GS1_Digital_Link_Grammar_<VERSION_NUMBER>.abnf -o ../lib/grammarObject.js
 ```
 
 This will generate the `grammarObject.js` file in the `lib` folder.
-You will have to apply little modifications to the generated file to make it work.
+You will have to apply some modifications to the generated file to make it work.
 
 #### Generated `grammarObject.js` file
 ```js
