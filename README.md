@@ -355,7 +355,7 @@ the `grammar` folder.
 
 The grammar files are used by the [`apglib`](https://github.com/ldthomas/apg-js2) library to generate the `grammarObject.js` file.
 
-then go to the `grammar` folder and run the following command:
+To update the grammar object go to the `grammar` folder and run the following command:
 
 ```bash
 apg -i GS1_Digital_Link_Grammar_<VERSION_NUMBER>.abnf -o ../lib/grammarObject.js
