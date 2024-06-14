@@ -388,7 +388,7 @@ module.exports = {
 }
 ```
 
-Indeed, the generated file is not exporting an object, so you have to wrap it into an object with `grammarObject` field to be able to use it.
+As the generated file is not exporting an object, so you have to wrap it into an object with `grammarObject` field to be able to use it.
 
 ## Unit Tests
 
